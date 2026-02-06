@@ -1,0 +1,11 @@
+import {
+  "mizchi/llm",
+  "mizchi/llm/ffi",
+  "mizchi/llm/anthropic",
+  "mizchi/llm/openai",
+  "mizchi/llm/claude_code",
+}
+
+options(
+  "is-main": true,
+)

@@ -1,0 +1,185 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "mizchi/llm"
+
+// Values
+pub fn collect(&Provider, Array[Message], tools? : Array[ToolDef]) -> CollectResult
+
+pub fn collect_text(&Provider, Array[Message], tools? : Array[ToolDef]) -> String
+
+pub let default_anthropic_model : String
+
+pub let default_ollama_model : String
+
+pub let default_openai_model : String
+
+pub let default_openrouter_model : String
+
+pub fn json_get_array(Json, String) -> Array[Json]?
+
+pub fn json_get_int(Json, String) -> Int?
+
+pub fn json_get_object(Json, String) -> Json?
+
+pub fn json_get_string(Json, String) -> String?
+
+pub fn run_agent(BoxedProvider, ToolRegistry, Array[Message], StopCondition, (AgentEvent) -> Unit) -> Unit
+
+pub fn truncate_messages(Array[Message], Int) -> Array[Message]
+
+// Errors
+
+// Types and methods
+pub(all) enum AgentEvent {
+  Stream(StreamEvent)
+  ToolExecute(name~ : String, input~ : Json)
+  ToolResult(name~ : String, result~ : String, is_error~ : Bool)
+  StepComplete(step~ : Int)
+  Done(reason~ : String)
+}
+
+pub struct BoxedProvider {
+  inner : &Provider
+}
+pub fn BoxedProvider::name(Self) -> String
+pub fn BoxedProvider::new(&Provider) -> Self
+pub fn BoxedProvider::stream(Self, Array[Message], Array[ToolDef], StreamHandler) -> Unit
+
+pub(all) struct CollectResult {
+  text : String
+  tool_calls : Array[ToolCall]
+  finish_reason : FinishReason
+  usage : Usage?
+}
+
+pub(all) enum ContentBlock {
+  Text(String)
+  ToolUse(id~ : String, name~ : String, input~ : Json)
+  ToolResult(tool_use_id~ : String, content~ : String, is_error~ : Bool)
+}
+pub fn ContentBlock::to_anthropic_json(Self) -> Json
+pub fn ContentBlock::to_openai_json(Self) -> Json
+
+pub(all) enum FinishReason {
+  Stop
+  ToolUse
+  Length
+  ContentFilter
+  Error
+  Unknown(String)
+}
+pub fn FinishReason::from_string(String) -> Self
+pub impl Show for FinishReason
+
+pub(all) struct Message {
+  role : Role
+  content : Array[ContentBlock]
+}
+pub fn Message::assistant(String) -> Self
+pub fn Message::estimate_tokens(Self) -> Int
+pub fn Message::get_text(Self) -> String
+pub fn Message::system(String) -> Self
+pub fn Message::text(Role, String) -> Self
+pub fn Message::to_anthropic_json(Self) -> Json
+pub fn Message::to_openai_json(Self) -> Json
+pub fn Message::user(String) -> Self
+
+pub(all) struct ProviderConfig {
+  api_key : String
+  model : String
+  max_tokens : Int
+  system_prompt : String
+  base_url : String
+  timeout_sec : Int
+  max_retries : Int
+  retry_delay_ms : Int
+}
+pub fn ProviderConfig::new(String, String, String, max_tokens? : Int, system_prompt? : String, timeout_sec? : Int, max_retries? : Int, retry_delay_ms? : Int) -> Self
+
+pub(all) enum Role {
+  User
+  Assistant
+  System
+  Tool
+}
+pub fn Role::from_string(String) -> Self
+pub fn Role::to_string(Self) -> String
+pub impl Eq for Role
+pub impl Show for Role
+
+pub(all) struct SchemaBuilder {
+  properties : Map[String, Json]
+  required : Array[String]
+}
+pub fn SchemaBuilder::array(Self, String, String, String, required? : Bool) -> Self
+pub fn SchemaBuilder::boolean(Self, String, String, required? : Bool) -> Self
+pub fn SchemaBuilder::build(Self) -> Json
+pub fn SchemaBuilder::integer(Self, String, String, required? : Bool) -> Self
+pub fn SchemaBuilder::new() -> Self
+pub fn SchemaBuilder::number(Self, String, String, required? : Bool) -> Self
+pub fn SchemaBuilder::string(Self, String, String, required? : Bool) -> Self
+pub fn SchemaBuilder::string_enum(Self, String, String, Array[String], required? : Bool) -> Self
+
+pub(all) enum StopCondition {
+  MaxSteps(Int)
+  OnFinish
+}
+
+pub(all) enum StreamEvent {
+  TextDelta(String)
+  ToolCallStart(id~ : String, name~ : String)
+  ToolCallDelta(id~ : String, input_delta~ : String)
+  ToolCallEnd(id~ : String, name~ : String, input~ : Json)
+  MessageStart
+  MessageEnd(finish_reason~ : FinishReason, usage~ : Usage?)
+  Error(String)
+}
+pub impl Show for StreamEvent
+
+pub(all) struct StreamHandler {
+  on_event : (StreamEvent) -> Unit
+}
+
+pub(all) struct ToolCall {
+  id : String
+  name : String
+  input : Json
+}
+
+pub(all) enum ToolChoice {
+  Auto
+  None
+  Required
+  Specific(String)
+}
+
+pub(all) struct ToolDef {
+  name : String
+  description : String
+  input_schema : Json
+}
+pub fn ToolDef::to_anthropic_json(Self) -> Json
+pub fn ToolDef::to_openai_json(Self) -> Json
+
+pub(all) struct ToolRegistry {
+  tools : Array[ToolDef]
+  handlers : Map[String, (Json) -> String]
+}
+pub fn ToolRegistry::execute(Self, String, Json) -> (String, Bool)
+pub fn ToolRegistry::get_defs(Self) -> Array[ToolDef]
+pub fn ToolRegistry::new() -> Self
+pub fn ToolRegistry::register(Self, String, String, Json, (Json) -> String) -> Unit
+
+pub(all) struct Usage {
+  input_tokens : Int
+  output_tokens : Int
+}
+pub impl Show for Usage
+
+// Type aliases
+
+// Traits
+pub(open) trait Provider {
+  stream(Self, Array[Message], Array[ToolDef], StreamHandler) -> Unit
+  name(Self) -> String
+}
+

@@ -1,0 +1,7 @@
+options(
+  targets: {
+    "env.mbt": [ "js" ],
+    "fetch.mbt": [ "js" ],
+    "subprocess.mbt": [ "js" ],
+  },
+)

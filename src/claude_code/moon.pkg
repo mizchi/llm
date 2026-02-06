@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/core/json",
+  "mizchi/llm",
+  "mizchi/llm/ffi",
+}
+
+options(
+  targets: { "claude_code.mbt": [ "js" ] },
+)

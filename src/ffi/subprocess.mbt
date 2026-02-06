@@ -1,38 +1,29 @@
 ///|
 /// Execute a command synchronously and return stdout.
-pub extern "js" fn js_exec_sync(command : String, timeout_ms : Int) -> String =
-  #|(command, timeoutMs) => {
-  #|  try {
-  #|    const { execSync } = require('child_process');
-  #|    return execSync(command, { timeout: timeoutMs, encoding: 'utf-8' });
-  #|  } catch (e) {
-  #|    return 'ERROR: ' + (e.message || String(e));
-  #|  }
-  #|}
+pub fn exec_sync(command : String, timeout_ms : Int) -> String {
+  run_shell(command, timeout_ms)
+}
 
 ///|
 /// Execute a command with streaming output (line by line).
-/// Uses spawnSync for synchronous execution so callbacks fire before return.
-pub extern "js" fn js_exec_stream(
+/// Uses run_command for synchronous execution, then splits output by lines.
+pub fn exec_stream(
   command : String,
   args_json : String,
   on_line : (String) -> Unit,
   on_done : () -> Unit,
   on_error : (String) -> Unit,
-) -> Unit =
-  #|(command, argsJson, onLine, onDone, onError) => {
-  #|  try {
-  #|    const { spawnSync } = require('child_process');
-  #|    const args = JSON.parse(argsJson);
-  #|    const result = spawnSync(command, args, { encoding: 'utf-8', maxBuffer: 50 * 1024 * 1024 });
-  #|    if (result.error) { onError(result.error.message || String(result.error)); return; }
-  #|    const stdout = result.stdout || '';
-  #|    const lines = stdout.split('\n');
-  #|    for (const line of lines) {
-  #|      if (line.trim()) { onLine(line); }
-  #|    }
-  #|    onDone();
-  #|  } catch (e) {
-  #|    onError(e.message || String(e));
-  #|  }
-  #|}
+) -> Unit {
+  let result = run_command(command, args_json)
+  if result.has_prefix("ERROR:") {
+    on_error(result)
+    return
+  }
+  let lines = split_lines(result)
+  for line in lines {
+    if not(line.trim(chars=" \t\r\n").to_string().is_empty()) {
+      on_line(line)
+    }
+  }
+  on_done()
+}

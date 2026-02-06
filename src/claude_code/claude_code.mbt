@@ -108,7 +108,7 @@ pub impl @llm.Provider for ClaudeCodeProvider with stream(
   }
   let args_json = Json::array(args.map(fn(s) { s.to_json() }))
   (handler.on_event)(@llm.StreamEvent::MessageStart)
-  @ffi.js_exec_stream(
+  @ffi.exec_stream(
     "claude",
     args_json.stringify(),
     fn(line) {

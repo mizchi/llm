@@ -3,7 +3,3 @@ import {
   "mizchi/llm",
   "mizchi/llm/ffi",
 }
-
-options(
-  targets: { "openai.mbt": [ "js" ] },
-)

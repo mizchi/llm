@@ -168,7 +168,7 @@ pub impl @llm.Provider for AnthropicProvider with stream(
     tools,
   )
   let active_tools : Map[String, (String, StringBuilder)] = {}
-  @ffi.js_fetch_sse(
+  @ffi.fetch_sse(
     url,
     "POST",
     headers.stringify(),

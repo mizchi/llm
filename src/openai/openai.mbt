@@ -290,7 +290,7 @@ pub impl @llm.Provider for OpenAIProvider with stream(
   let active_tools : Map[String, (String, StringBuilder)] = {}
   // Hold pending MessageEnd to merge with a later usage-only chunk
   let pending_end : Ref[@llm.StreamEvent?] = { val: None }
-  @ffi.js_fetch_sse(
+  @ffi.fetch_sse(
     url,
     "POST",
     headers.stringify(),
@@ -441,7 +441,7 @@ pub fn list_openrouter_models() -> Array[ModelInfo] {
   let headers : Map[String, Json] = {}
   headers["Accept"] = "application/json".to_json()
   let headers_json = Json::object(headers).stringify()
-  @ffi.js_fetch(
+  @ffi.fetch(
     "https://openrouter.ai/api/v1/models",
     "GET",
     headers_json,

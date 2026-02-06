@@ -1,7 +1,13 @@
+import {
+  "moonbitlang/core/json",
+}
+
 options(
+  "native-stub": [ "native_stub.c" ],
   targets: {
-    "env.mbt": [ "js" ],
-    "fetch.mbt": [ "js" ],
-    "subprocess.mbt": [ "js" ],
+    "raw_js.mbt": [ "js" ],
+    "raw_native.mbt": [ "native" ],
+    "raw_wasm.mbt": [ "wasm", "wasm-gc" ],
+    "string_conv.mbt": [ "native" ],
   },
 )

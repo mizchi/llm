@@ -1,0 +1,65 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "mizchi/llm/agent"
+
+// Values
+pub fn callback_chat_provider((Array[Json], Array[Json], String) -> LoopResponse) -> &ChatProvider
+
+pub fn run_agent_loop(Array[Json], Array[Json], String, Int, (Array[Json], Array[Json], String) -> LoopResponse, (String, Json) -> String, fallback_content? : String) -> AgentTurnResult
+
+pub fn run_agent_loop_with_provider(Array[Json], Array[Json], &ChatProvider, String, Int, (String, Json) -> String, fallback_content? : String) -> AgentTurnResult
+
+// Errors
+
+// Types and methods
+pub struct AgentTurnResult {
+  final_content : String
+  messages : Array[Json]
+  iterations : Int
+}
+
+pub struct LoopResponse {
+  content : String
+  tool_calls : Array[LoopToolCall]
+  reasoning_content : String?
+}
+pub fn LoopResponse::new(String, Array[LoopToolCall], String?) -> Self
+
+pub struct LoopToolCall {
+  id : String
+  name : String
+  arguments : Json
+}
+pub fn LoopToolCall::new(String, String, Json) -> Self
+
+pub struct SubagentQueue {
+  runner : (String) -> Result[String, String]
+  mut id_counter : Int
+  pending : Array[SubagentTask]
+}
+pub fn SubagentQueue::new((String) -> Result[String, String]) -> Self
+pub fn SubagentQueue::pending_count(Self) -> Int
+pub fn SubagentQueue::run_next(Self) -> SubagentRunResult?
+pub fn SubagentQueue::spawn(Self, String, label? : String?, origin_channel? : String, origin_chat_id? : String) -> String
+
+pub struct SubagentRunResult {
+  task : SubagentTask
+  ok : Bool
+  result : String
+  announcement : String
+}
+
+pub struct SubagentTask {
+  id : String
+  label : String
+  task : String
+  origin_channel : String
+  origin_chat_id : String
+}
+
+// Type aliases
+
+// Traits
+pub(open) trait ChatProvider {
+  chat(Self, Array[Json], Array[Json], String) -> LoopResponse
+}
+

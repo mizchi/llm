@@ -22,11 +22,27 @@ pub fn json_get_object(Json, String) -> Json?
 
 pub fn json_get_string(Json, String) -> String?
 
+pub fn parse_skill_frontmatter(String) -> (Map[String, String]?, String)
+
 pub fn run_agent(BoxedProvider, ToolRegistry, Array[Message], StopCondition, (AgentEvent) -> Unit) -> Unit
 
 pub fn run_agent_cancellable(BoxedProvider, ToolRegistry, Array[Message], StopCondition, () -> Bool, (AgentEvent) -> Unit) -> Unit
 
+pub fn run_json_chat_loop(Array[Json], Array[Json], Int, (Array[Json], Array[Json]) -> JsonChatResponse, (String, Json) -> String, fallback_content? : String) -> JsonChatLoopResult
+
+pub fn skill_metadata_description(Map[String, String]?, String) -> String
+
+pub fn skill_metadata_is_always(Map[String, String]?, scope_key? : String) -> Bool
+
+pub fn skill_metadata_is_available(Map[String, String]?, bins? : Map[String, Bool], env? : Map[String, String], scope_key? : String) -> Bool
+
+pub fn skill_metadata_missing_requirements(Map[String, String]?, bins? : Map[String, Bool], env? : Map[String, String], scope_key? : String) -> String
+
+pub fn strip_skill_frontmatter(String) -> String
+
 pub fn truncate_messages(Array[Message], Int) -> Array[Message]
+
+pub fn validate_tool_input(Json, Json) -> Array[String]
 
 // Errors
 
@@ -71,6 +87,26 @@ pub(all) enum FinishReason {
 }
 pub fn FinishReason::from_string(String) -> Self
 pub impl Show for FinishReason
+
+pub(all) struct JsonChatLoopResult {
+  final_content : String
+  messages : Array[Json]
+  iterations : Int
+}
+
+pub(all) struct JsonChatResponse {
+  content : String
+  tool_calls : Array[JsonChatToolCall]
+  reasoning_content : String?
+}
+pub fn JsonChatResponse::new(String, Array[JsonChatToolCall], String?) -> Self
+
+pub(all) struct JsonChatToolCall {
+  id : String
+  name : String
+  arguments : Json
+}
+pub fn JsonChatToolCall::new(String, String, Json) -> Self
 
 pub(all) struct Message {
   role : Role
@@ -128,6 +164,22 @@ pub fn SchemaBuilder::number(Self, String, String, required? : Bool) -> Self
 pub fn SchemaBuilder::string(Self, String, String, required? : Bool) -> Self
 pub fn SchemaBuilder::string_enum(Self, String, String, Array[String], required? : Bool) -> Self
 
+pub(all) struct SkillEntry {
+  name : String
+  path : String
+  source : String
+  content : String
+}
+pub fn SkillEntry::new(String, String, String, String) -> Self
+
+pub(all) struct SkillInfo {
+  name : String
+  path : String
+  source : String
+  available : Bool
+}
+pub fn SkillInfo::new(String, String, String, Bool) -> Self
+
 pub(all) enum StopCondition {
   MaxSteps(Int)
   OnFinish
@@ -174,6 +226,7 @@ pub(all) struct ToolRegistry {
   handlers : Map[String, (Json) -> String]
 }
 pub fn ToolRegistry::execute(Self, String, Json) -> (String, Bool)
+pub fn ToolRegistry::execute_validated(Self, String, Json) -> (String, Bool)
 pub fn ToolRegistry::get_defs(Self) -> Array[ToolDef]
 pub fn ToolRegistry::new() -> Self
 pub fn ToolRegistry::register(Self, String, String, Json, (Json) -> String) -> Unit

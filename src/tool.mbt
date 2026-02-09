@@ -12,3 +12,6 @@ pub type SchemaBuilder = @tools.SchemaBuilder
 
 ///|
 pub type ToolRegistry = @tools.ToolRegistry
+
+///|
+pub type ToolExecuteError = @tools.ToolExecuteError

@@ -2,6 +2,8 @@
 package "mizchi/llm/tools"
 
 // Values
+pub fn validate_params(Json, Json) -> Array[String]
+
 pub fn validate_tool_input(Json, Json) -> Array[String]
 
 // Errors
@@ -32,18 +34,29 @@ pub(all) struct ToolDef {
   description : String
   input_schema : Json
 }
+pub fn ToolDef::new(String, String, Json) -> Self
 pub fn ToolDef::to_anthropic_json(Self) -> Json
 pub fn ToolDef::to_openai_json(Self) -> Json
+
+pub(all) enum ToolExecuteError {
+  ToolNotFound(String)
+  InvalidParams(tool_name~ : String, errors~ : Array[String])
+}
+pub fn ToolExecuteError::to_message(Self) -> String
 
 pub(all) struct ToolRegistry {
   tools : Array[ToolDef]
   handlers : Map[String, (Json) -> String]
 }
+pub fn ToolRegistry::definitions(Self) -> Array[Json]
 pub fn ToolRegistry::execute(Self, String, Json) -> (String, Bool)
+pub fn ToolRegistry::execute_result(Self, String, Json) -> Result[String, ToolExecuteError]
 pub fn ToolRegistry::execute_validated(Self, String, Json) -> (String, Bool)
 pub fn ToolRegistry::get_defs(Self) -> Array[ToolDef]
+pub fn ToolRegistry::has(Self, String) -> Bool
 pub fn ToolRegistry::new() -> Self
 pub fn ToolRegistry::register(Self, String, String, Json, (Json) -> String) -> Unit
+pub fn ToolRegistry::register_def(Self, ToolDef, (Json) -> String) -> Unit
 
 // Type aliases
 

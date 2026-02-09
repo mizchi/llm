@@ -7,6 +7,15 @@ pub(all) struct ToolDef {
 }
 
 ///|
+pub fn ToolDef::new(
+  name : String,
+  description : String,
+  input_schema : Json,
+) -> ToolDef {
+  { name, description, input_schema }
+}
+
+///|
 /// ToolChoice controls how the model selects tools.
 pub(all) enum ToolChoice {
   Auto
@@ -161,6 +170,24 @@ pub(all) struct ToolRegistry {
 }
 
 ///|
+pub(all) enum ToolExecuteError {
+  ToolNotFound(String)
+  InvalidParams(tool_name~ : String, errors~ : Array[String])
+}
+
+///|
+pub fn ToolExecuteError::to_message(self : ToolExecuteError) -> String {
+  match self {
+    ToolNotFound(name) => "Error: Tool '" + name + "' not found"
+    InvalidParams(tool_name~, errors~) =>
+      "Error: Invalid parameters for tool '" +
+      tool_name +
+      "': " +
+      errors.join("; ")
+  }
+}
+
+///|
 pub fn ToolRegistry::new() -> ToolRegistry {
   { tools: [], handlers: Map::new() }
 }
@@ -173,8 +200,17 @@ pub fn ToolRegistry::register(
   input_schema : Json,
   handler : (Json) -> String,
 ) -> Unit {
-  self.tools.push({ name, description, input_schema })
-  self.handlers[name] = handler
+  self.register_def(ToolDef::new(name, description, input_schema), handler)
+}
+
+///|
+pub fn ToolRegistry::register_def(
+  self : ToolRegistry,
+  tool : ToolDef,
+  handler : (Json) -> String,
+) -> Unit {
+  self.tools.push(tool)
+  self.handlers[tool.name] = handler
 }
 
 ///|
@@ -186,6 +222,28 @@ pub fn ToolRegistry::execute(
   match self.handlers.get(name) {
     Some(handler) => (handler(input), false)
     None => ("Tool not found: " + name, true)
+  }
+}
+
+///|
+pub fn ToolRegistry::execute_result(
+  self : ToolRegistry,
+  name : String,
+  input : Json,
+) -> Result[String, ToolExecuteError] {
+  match self.find_tool(name) {
+    None => Err(ToolNotFound(name))
+    Some(tool) =>
+      match self.handlers.get(name) {
+        None => Err(ToolNotFound(name))
+        Some(handler) => {
+          let errors = validate_tool_input(input, tool.input_schema)
+          if not(errors.is_empty()) {
+            return Err(InvalidParams(tool_name=name, errors~))
+          }
+          Ok(handler(input))
+        }
+      }
   }
 }
 
@@ -214,6 +272,20 @@ pub fn ToolRegistry::execute_validated(
 ///|
 pub fn ToolRegistry::get_defs(self : ToolRegistry) -> Array[ToolDef] {
   self.tools
+}
+
+///|
+pub fn ToolRegistry::has(self : ToolRegistry, name : String) -> Bool {
+  self.find_tool(name) is Some(_)
+}
+
+///|
+pub fn ToolRegistry::definitions(self : ToolRegistry) -> Array[Json] {
+  let out : Array[Json] = []
+  for tool in self.tools {
+    out.push(tool.to_openai_json())
+  }
+  out
 }
 
 ///|

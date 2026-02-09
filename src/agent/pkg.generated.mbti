@@ -2,7 +2,13 @@
 package "mizchi/llm/agent"
 
 // Values
+pub fn add_assistant_message(Array[Json], String?, Array[Json]?, String?) -> Array[Json]
+
+pub fn add_tool_result(Array[Json], String, String, String) -> Array[Json]
+
 pub fn callback_chat_provider((Array[Json], Array[Json], String) -> LoopResponse) -> &ChatProvider
+
+pub fn compute_next_run(CronSchedule, Int) -> Int?
 
 pub fn run_agent_loop(Array[Json], Array[Json], String, Int, (Array[Json], Array[Json], String) -> LoopResponse, (String, Json) -> String, fallback_content? : String) -> AgentTurnResult
 
@@ -17,6 +23,69 @@ pub struct AgentTurnResult {
   iterations : Int
 }
 
+pub struct CronJob {
+  id : String
+  name : String
+  mut enabled : Bool
+  schedule : CronSchedule
+  payload : CronPayload
+  state : CronJobState
+  created_at_ms : Int
+  mut updated_at_ms : Int
+  delete_after_run : Bool
+}
+
+pub struct CronJobState {
+  mut next_run_at_ms : Int?
+  mut last_run_at_ms : Int?
+  mut last_status : String?
+  mut last_error : String?
+}
+pub fn CronJobState::new(Int?) -> Self
+
+pub struct CronPayload {
+  kind : String
+  message : String
+  deliver : Bool
+  channel : String?
+  to : String?
+}
+pub fn CronPayload::agent_turn(String, deliver? : Bool, channel? : String?, to? : String?) -> Self
+
+pub struct CronSchedule {
+  kind : CronScheduleKind
+  at_ms : Int?
+  every_ms : Int?
+  expr : String?
+  tz : String?
+}
+pub fn CronSchedule::at(Int) -> Self
+pub fn CronSchedule::cron(String, tz? : String?) -> Self
+pub fn CronSchedule::every(Int) -> Self
+
+pub enum CronScheduleKind {
+  At
+  Every
+  Cron
+}
+pub impl Eq for CronScheduleKind
+
+pub struct CronService {
+  jobs : Array[CronJob]
+  clock : () -> Int
+  mut on_job : ((CronJob) -> String?)?
+  mut id_counter : Int
+}
+pub fn CronService::add_job(Self, String, CronSchedule, String, deliver? : Bool, channel? : String?, to? : String?, delete_after_run? : Bool) -> CronJob
+pub fn CronService::enable_job(Self, String, enabled? : Bool) -> CronJob?
+pub fn CronService::list_jobs(Self, include_disabled? : Bool) -> Array[CronJob]
+pub fn CronService::new(clock? : () -> Int, on_job? : ((CronJob) -> String?)?) -> Self
+pub fn CronService::remove_job(Self, String) -> Bool
+pub fn CronService::run_due(Self) -> Int
+pub fn CronService::run_job(Self, String, force? : Bool) -> Bool
+pub fn CronService::set_on_job(Self, ((CronJob) -> String?)?) -> Unit
+pub fn CronService::status(Self) -> Map[String, Json]
+
 pub struct LoopResponse {
   content : String
   tool_calls : Array[LoopToolCall]
@@ -30,6 +99,35 @@ pub struct LoopToolCall {
   arguments : Json
 }
 pub fn LoopToolCall::new(String, String, Json) -> Self
+
+pub struct Session {
+  key : String
+  mut messages : Array[Json]
+  created_at_ms : Int
+  mut updated_at_ms : Int
+  metadata : Map[String, Json]
+  clock : () -> Int
+}
+pub fn Session::add_message(Self, String, String) -> Unit
+pub fn Session::clear(Self) -> Unit
+pub fn Session::get_history(Self, max_messages? : Int) -> Array[Json]
+pub fn Session::new(String, Int, () -> Int) -> Self
+
+pub struct SessionManager {
+  cache : Map[String, Session]
+  clock : () -> Int
+}
+pub fn SessionManager::delete(Self, String) -> Bool
+pub fn SessionManager::get_or_create(Self, String) -> Session
+pub fn SessionManager::list_sessions(Self) -> Array[SessionSummary]
+pub fn SessionManager::new(clock? : () -> Int) -> Self
+pub fn SessionManager::save(Self, Session) -> Unit
+
+pub struct SessionSummary {
+  key : String
+  created_at_ms : Int
+  updated_at_ms : Int
+}
 
 pub struct SubagentQueue {
   runner : (String) -> Result[String, String]

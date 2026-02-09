@@ -46,6 +46,8 @@ pub fn strip_skill_frontmatter(String) -> String
 
 pub fn truncate_messages(Array[Message], Int) -> Array[Message]
 
+pub fn validate_params(Json, Json) -> Array[String]
+
 pub fn validate_tool_input(Json, Json) -> Array[String]
 
 // Errors
@@ -209,6 +211,8 @@ pub using @tools {type SchemaBuilder}
 pub using @tools {type ToolChoice}
 
 pub using @tools {type ToolDef}
+
+pub using @tools {type ToolExecuteError}
 
 pub using @tools {type ToolRegistry}
 

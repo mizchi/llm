@@ -82,3 +82,10 @@ test "ToolRegistry::execute_validated executes valid input" {
   assert_eq(result, "ok")
   assert_true(not(is_error))
 }
+
+///|
+test "validate_params is an alias of validate_tool_input" {
+  let errors = validate_params({ "query": "x".to_json() }, sample_schema())
+  assert_true(has_error(errors, "missing required count"))
+  assert_true(has_error(errors, "query must be at least 2 chars"))
+}

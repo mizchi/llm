@@ -15,6 +15,11 @@ pub fn validate_tool_input(input : Json, schema : Json) -> Array[String] {
 }
 
 ///|
+pub fn validate_params(input : Json, schema : Json) -> Array[String] {
+  validate_tool_input(input, schema)
+}
+
+///|
 fn validate_tool_input_internal(
   value : Json,
   schema : Json,

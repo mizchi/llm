@@ -3,6 +3,7 @@ package "mizchi/llm/openai"
 
 import {
   "mizchi/llm",
+  "mizchi/llm/tools",
 }
 
 // Values

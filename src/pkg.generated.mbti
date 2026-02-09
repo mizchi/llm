@@ -1,10 +1,14 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "mizchi/llm"
 
-// Values
-pub fn collect(&Provider, Array[Message], tools? : Array[ToolDef]) -> CollectResult
+import {
+  "mizchi/llm/tools",
+}
 
-pub fn collect_text(&Provider, Array[Message], tools? : Array[ToolDef]) -> String
+// Values
+pub fn collect(&Provider, Array[Message], tools? : Array[@tools.ToolDef]) -> CollectResult
+
+pub fn collect_text(&Provider, Array[Message], tools? : Array[@tools.ToolDef]) -> String
 
 pub let default_anthropic_model : String
 
@@ -24,9 +28,9 @@ pub fn json_get_string(Json, String) -> String?
 
 pub fn parse_skill_frontmatter(String) -> (Map[String, String]?, String)
 
-pub fn run_agent(BoxedProvider, ToolRegistry, Array[Message], StopCondition, (AgentEvent) -> Unit) -> Unit
+pub fn run_agent(BoxedProvider, @tools.ToolRegistry, Array[Message], StopCondition, (AgentEvent) -> Unit) -> Unit
 
-pub fn run_agent_cancellable(BoxedProvider, ToolRegistry, Array[Message], StopCondition, () -> Bool, (AgentEvent) -> Unit) -> Unit
+pub fn run_agent_cancellable(BoxedProvider, @tools.ToolRegistry, Array[Message], StopCondition, () -> Bool, (AgentEvent) -> Unit) -> Unit
 
 pub fn run_json_chat_loop(Array[Json], Array[Json], Int, (Array[Json], Array[Json]) -> JsonChatResponse, (String, Json) -> String, fallback_content? : String) -> JsonChatLoopResult
 
@@ -60,7 +64,7 @@ pub struct BoxedProvider {
 }
 pub fn BoxedProvider::name(Self) -> String
 pub fn BoxedProvider::new(&Provider) -> Self
-pub fn BoxedProvider::stream(Self, Array[Message], Array[ToolDef], StreamHandler) -> Unit
+pub fn BoxedProvider::stream(Self, Array[Message], Array[@tools.ToolDef], StreamHandler) -> Unit
 
 pub(all) struct CollectResult {
   text : String
@@ -151,19 +155,6 @@ pub fn Role::to_string(Self) -> String
 pub impl Eq for Role
 pub impl Show for Role
 
-pub(all) struct SchemaBuilder {
-  properties : Map[String, Json]
-  required : Array[String]
-}
-pub fn SchemaBuilder::array(Self, String, String, String, required? : Bool) -> Self
-pub fn SchemaBuilder::boolean(Self, String, String, required? : Bool) -> Self
-pub fn SchemaBuilder::build(Self) -> Json
-pub fn SchemaBuilder::integer(Self, String, String, required? : Bool) -> Self
-pub fn SchemaBuilder::new() -> Self
-pub fn SchemaBuilder::number(Self, String, String, required? : Bool) -> Self
-pub fn SchemaBuilder::string(Self, String, String, required? : Bool) -> Self
-pub fn SchemaBuilder::string_enum(Self, String, String, Array[String], required? : Bool) -> Self
-
 pub(all) struct SkillEntry {
   name : String
   path : String
@@ -206,31 +197,6 @@ pub(all) struct ToolCall {
   input : Json
 }
 
-pub(all) enum ToolChoice {
-  Auto
-  None
-  Required
-  Specific(String)
-}
-
-pub(all) struct ToolDef {
-  name : String
-  description : String
-  input_schema : Json
-}
-pub fn ToolDef::to_anthropic_json(Self) -> Json
-pub fn ToolDef::to_openai_json(Self) -> Json
-
-pub(all) struct ToolRegistry {
-  tools : Array[ToolDef]
-  handlers : Map[String, (Json) -> String]
-}
-pub fn ToolRegistry::execute(Self, String, Json) -> (String, Bool)
-pub fn ToolRegistry::execute_validated(Self, String, Json) -> (String, Bool)
-pub fn ToolRegistry::get_defs(Self) -> Array[ToolDef]
-pub fn ToolRegistry::new() -> Self
-pub fn ToolRegistry::register(Self, String, String, Json, (Json) -> String) -> Unit
-
 pub(all) struct Usage {
   input_tokens : Int
   output_tokens : Int
@@ -238,10 +204,17 @@ pub(all) struct Usage {
 pub impl Show for Usage
 
 // Type aliases
+pub using @tools {type SchemaBuilder}
+
+pub using @tools {type ToolChoice}
+
+pub using @tools {type ToolDef}
+
+pub using @tools {type ToolRegistry}
 
 // Traits
 pub(open) trait Provider {
-  stream(Self, Array[Message], Array[ToolDef], StreamHandler) -> Unit
+  stream(Self, Array[Message], Array[@tools.ToolDef], StreamHandler) -> Unit
   name(Self) -> String
 }
 

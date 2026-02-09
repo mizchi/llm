@@ -3,6 +3,7 @@ package "mizchi/llm/claude_code"
 
 import {
   "mizchi/llm",
+  "mizchi/llm/tools",
 }
 
 // Values

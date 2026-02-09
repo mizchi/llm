@@ -146,6 +146,97 @@ fn get_int(j : Json, field : String, default : Int) -> Int {
 }
 
 ///|
+/// Extract tool-call fragments from an OpenAI SSE chunk.
+/// Returns (tool_id, name_delta, arguments_delta).
+fn extract_openai_tool_fragments(
+  data : String,
+) -> Array[(String, String, String)] {
+  let out : Array[(String, String, String)] = []
+  let json = @json.parse(data) catch { _ => return out }
+  let choices = match @llm.json_get_array(json, "choices") {
+    Some(arr) => arr
+    None => return out
+  }
+  if choices.is_empty() {
+    return out
+  }
+  let choice = choices[0]
+  let delta = match @llm.json_get_object(choice, "delta") {
+    Some(d) => d
+    None => return out
+  }
+  match @llm.json_get_array(delta, "tool_calls") {
+    Some(tool_calls) =>
+      for tc in tool_calls {
+        let index = get_int(tc, "index", -1)
+        let raw_id = get_str(tc, "id", "")
+        let tool_id = if index >= 0 {
+          index.to_string()
+        } else if not(raw_id.is_empty()) {
+          raw_id
+        } else {
+          "0"
+        }
+        let (name, arguments) = match @llm.json_get_object(tc, "function") {
+          Some(func) =>
+            (get_str(func, "name", ""), get_str(func, "arguments", ""))
+          None => ("", "")
+        }
+        if not(name.is_empty()) || not(arguments.is_empty()) {
+          out.push((tool_id, name, arguments))
+        }
+      }
+    None => ()
+  }
+  out
+}
+
+///|
+/// Apply tool-call fragments into active tool buffers.
+/// Emits synthetic ToolCallStart/ToolCallDelta events for robust reconstruction.
+fn apply_openai_tool_fragments(
+  data : String,
+  active_tools : Map[String, (String, StringBuilder)],
+) -> Array[@llm.StreamEvent] {
+  let out : Array[@llm.StreamEvent] = []
+  let fragments = extract_openai_tool_fragments(data)
+  for fragment in fragments {
+    let (tool_id, name_delta, args_delta) = fragment
+    match active_tools.get(tool_id) {
+      Some((current_name, input_buf)) => {
+        if current_name.is_empty() && not(name_delta.is_empty()) {
+          active_tools[tool_id] = (name_delta, input_buf)
+          out.push(@llm.StreamEvent::ToolCallStart(id=tool_id, name=name_delta))
+        }
+        if not(args_delta.is_empty()) {
+          input_buf.write_string(args_delta)
+          out.push(
+            @llm.StreamEvent::ToolCallDelta(id=tool_id, input_delta=args_delta),
+          )
+        }
+      }
+      None => {
+        let input_buf = StringBuilder::new()
+        if not(args_delta.is_empty()) {
+          input_buf.write_string(args_delta)
+        }
+        let initial_name = if name_delta.is_empty() { "" } else { name_delta }
+        active_tools[tool_id] = (initial_name, input_buf)
+        if not(name_delta.is_empty()) {
+          out.push(@llm.StreamEvent::ToolCallStart(id=tool_id, name=name_delta))
+        }
+        if not(args_delta.is_empty()) {
+          out.push(
+            @llm.StreamEvent::ToolCallDelta(id=tool_id, input_delta=args_delta),
+          )
+        }
+      }
+    }
+  }
+  out
+}
+
+///|
 /// Parse a single SSE data line from OpenAI-compatible streaming API.
 pub fn parse_openai_event(data : String) -> @llm.StreamEvent? {
   let json = @json.parse(data) catch { _ => return None }
@@ -297,20 +388,14 @@ pub impl @llm.Provider for OpenAIProvider with stream(
     body.stringify(),
     self.config.timeout_sec,
     fn(line) {
+      for event in apply_openai_tool_fragments(line, active_tools) {
+        (handler.on_event)(event)
+      }
       match parse_openai_event(line) {
         Some(event) =>
           match event {
-            @llm.StreamEvent::ToolCallStart(id~, name~) => {
-              active_tools[id] = (name, StringBuilder::new())
-              (handler.on_event)(event)
-            }
-            @llm.StreamEvent::ToolCallDelta(id~, input_delta~) => {
-              match active_tools.get(id) {
-                Some((_, buf)) => buf.write_string(input_delta)
-                None => ()
-              }
-              (handler.on_event)(event)
-            }
+            @llm.StreamEvent::ToolCallStart(..)
+            | @llm.StreamEvent::ToolCallDelta(..) => ()
             @llm.StreamEvent::MessageEnd(
               finish_reason=cur_reason,
               usage=cur_usage

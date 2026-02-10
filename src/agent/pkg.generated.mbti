@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "mizchi/llm/agent"
 
+import {
+  "mizchi/llm",
+}
+
 // Values
 pub fn add_assistant_message(Array[Json], String?, Array[Json]?, String?) -> Array[Json]
 
@@ -10,9 +14,13 @@ pub fn callback_chat_provider((Array[Json], Array[Json], String) -> LoopResponse
 
 pub fn compute_next_run(CronSchedule, Int) -> Int?
 
+pub fn llm_chat_provider(&@llm.Provider) -> &ChatProvider
+
 pub fn run_agent_loop(Array[Json], Array[Json], String, Int, (Array[Json], Array[Json], String) -> LoopResponse, (String, Json) -> String, fallback_content? : String) -> AgentTurnResult
 
 pub fn run_agent_loop_with_provider(Array[Json], Array[Json], &ChatProvider, String, Int, (String, Json) -> String, fallback_content? : String) -> AgentTurnResult
+
+pub fn run_runtime_turn(SessionManager, RuntimeTurnRequest, (Array[Json], String, String, String) -> String) -> RuntimeTurnResult
 
 // Errors
 
@@ -99,6 +107,30 @@ pub struct LoopToolCall {
   arguments : Json
 }
 pub fn LoopToolCall::new(String, String, Json) -> Self
+
+pub(all) enum RuntimeTurnKind {
+  UserInbound
+  SystemInbound
+}
+pub impl Eq for RuntimeTurnKind
+
+pub struct RuntimeTurnRequest {
+  kind : RuntimeTurnKind
+  session_key : String
+  channel : String
+  chat_id : String
+  sender_id : String
+  content : String
+  metadata : Map[String, Json]
+}
+pub fn RuntimeTurnRequest::new(RuntimeTurnKind, String, String, String, String, String, metadata? : Map[String, Json]) -> Self
+
+pub struct RuntimeTurnResult {
+  channel : String
+  chat_id : String
+  content : String
+  metadata : Map[String, Json]
+}
 
 pub struct Session {
   key : String

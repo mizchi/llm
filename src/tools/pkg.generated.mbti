@@ -2,9 +2,29 @@
 package "mizchi/llm/tools"
 
 // Values
+pub fn clamp(Int, Int, Int) -> Int
+
+pub fn count_occurrences(String, String) -> Int
+
+pub fn guard_command(String, Bool) -> String?
+
+pub fn normalize_path(String) -> String
+
+pub fn optional_int(Json, String) -> Int?
+
+pub fn optional_string(Json, String) -> String?
+
+pub fn required_string(Json, String) -> String?
+
+pub fn resolve_path(String, String?) -> Result[String, String]
+
 pub fn validate_params(Json, Json) -> Array[String]
 
 pub fn validate_tool_input(Json, Json) -> Array[String]
+
+pub fn validate_url(String) -> Result[Unit, String]
+
+pub fn web_fetch_result_json(String, String, Int, String, String, Bool) -> String
 
 // Errors
 

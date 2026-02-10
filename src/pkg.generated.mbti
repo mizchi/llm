@@ -173,6 +173,21 @@ pub(all) struct SkillInfo {
 }
 pub fn SkillInfo::new(String, String, String, Bool) -> Self
 
+pub struct SkillsLoader {
+  workspace_skills : Map[String, SkillEntry]
+  builtin_skills : Map[String, SkillEntry]
+}
+pub fn SkillsLoader::build_skills_summary(Self, bins? : Map[String, Bool], env? : Map[String, String]) -> String
+pub fn SkillsLoader::get_always_skills(Self, bins? : Map[String, Bool], env? : Map[String, String]) -> Array[String]
+pub fn SkillsLoader::get_skill_description(Self, String) -> String
+pub fn SkillsLoader::get_skill_metadata(Self, String) -> Map[String, String]?
+pub fn SkillsLoader::list_skills(Self, filter_unavailable? : Bool, bins? : Map[String, Bool], env? : Map[String, String]) -> Array[SkillInfo]
+pub fn SkillsLoader::load_skill(Self, String) -> String?
+pub fn SkillsLoader::load_skills_for_context(Self, Array[String]) -> String
+pub fn SkillsLoader::new() -> Self
+pub fn SkillsLoader::register_builtin_skill(Self, String, String, path? : String) -> Unit
+pub fn SkillsLoader::register_workspace_skill(Self, String, String, path? : String) -> Unit
+
 pub(all) enum StopCondition {
   MaxSteps(Int)
   OnFinish

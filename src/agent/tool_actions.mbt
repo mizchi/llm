@@ -47,7 +47,7 @@ pub enum CronToolPlan {
     schedule~ : CronSchedule,
     message~ : String,
     channel~ : String,
-    chat_id~ : String,
+    chat_id~ : String
   )
   List
   Remove(job_id~ : String)
@@ -308,12 +308,7 @@ fn cron_kind_label(kind : CronScheduleKind) -> String {
 ///|
 fn resolve_target(explicit : String?, fallback : String) -> String {
   match explicit {
-    Some(value) =>
-      if value.is_empty() {
-        fallback
-      } else {
-        value
-      }
+    Some(value) => if value.is_empty() { fallback } else { value }
     None => fallback
   }
 }

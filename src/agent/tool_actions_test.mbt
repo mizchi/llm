@@ -76,11 +76,15 @@ test "resolve_spawn_tool validates and sets default origin" {
 ///|
 test "resolve_cron_tool validates action and parameters" {
   let ctx = RuntimeToolContext::new(channel="telegram", chat_id="42")
-  match resolve_cron_tool({
-    "action": "add".to_json(),
-    "message": "daily reminder".to_json(),
-    "every_seconds": (60).to_json(),
-  }, ctx) {
+  match
+    resolve_cron_tool(
+      {
+        "action": "add".to_json(),
+        "message": "daily reminder".to_json(),
+        "every_seconds": (60).to_json(),
+      },
+      ctx,
+    ) {
     Ok(Add(name~, schedule~, message~, channel~, chat_id~)) => {
       assert_eq(name, "daily reminder")
       assert_eq(message, "daily reminder")
@@ -90,25 +94,22 @@ test "resolve_cron_tool validates action and parameters" {
     }
     _ => assert_true(false)
   }
-
   match resolve_cron_tool({ "action": "list".to_json() }, ctx) {
     Ok(List) => ()
     _ => assert_true(false)
   }
-
-  match resolve_cron_tool({
-    "action": "remove".to_json(),
-    "job_id": "job-1".to_json(),
-  }, ctx) {
+  match
+    resolve_cron_tool(
+      { "action": "remove".to_json(), "job_id": "job-1".to_json() },
+      ctx,
+    ) {
     Ok(Remove(job_id~)) => assert_eq(job_id, "job-1")
     _ => assert_true(false)
   }
-
   match resolve_cron_tool({ "action": "noop".to_json() }, ctx) {
     Ok(_) => assert_true(false)
     Err(err) => assert_eq(err, "Unknown action: noop")
   }
-
   match resolve_cron_tool({ "action": "add".to_json() }, ctx) {
     Ok(_) => assert_true(false)
     Err(err) => assert_eq(err, "Error: message is required for add")
@@ -123,7 +124,6 @@ test "formatters keep existing agent_tools messages" {
   )
   assert_eq(format_cron_remove_result("job-1", true), "Removed job job-1")
   assert_eq(format_cron_remove_result("job-1", false), "Job job-1 not found")
-
   let cron = CronService::new()
   assert_eq(format_cron_list(cron.list_jobs()), "No scheduled jobs.")
   let job = cron.add_job("daily", CronSchedule::every(60_000), "daily")

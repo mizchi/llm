@@ -66,9 +66,7 @@ pub fn SubagentQueue::pending_count(self : SubagentQueue) -> Int {
 }
 
 ///|
-pub fn SubagentQueue::run_next(
-  self : SubagentQueue,
-) -> SubagentRunResult? {
+pub fn SubagentQueue::run_next(self : SubagentQueue) -> SubagentRunResult? {
   if self.pending.is_empty() {
     return None
   }

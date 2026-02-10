@@ -23,7 +23,6 @@ test "session manager stores and returns recent history" {
   now.val = 110
   session.add_message("assistant", "world")
   manager.save(session)
-
   let history = session.get_history(max_messages=1)
   assert_eq(history.length(), 1)
   inspect(
@@ -43,12 +42,10 @@ test "session manager list sorts by updated time desc" {
   let s1 = manager.get_or_create("cli:1")
   s1.add_message("user", "a")
   manager.save(s1)
-
   now.val = 20
   let s2 = manager.get_or_create("cli:2")
   s2.add_message("user", "b")
   manager.save(s2)
-
   let listed = manager.list_sessions()
   assert_eq(listed.length(), 2)
   assert_eq(listed[0].key, "cli:2")
@@ -61,7 +58,6 @@ test "session manager delete removes session" {
   let s = manager.get_or_create("cli:gone")
   s.add_message("user", "x")
   manager.save(s)
-
   assert_true(manager.delete("cli:gone"))
   assert_true(not(manager.delete("cli:gone")))
   let listed = manager.list_sessions()

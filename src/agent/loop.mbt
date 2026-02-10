@@ -122,9 +122,7 @@ pub fn run_agent_loop_with_provider(
 fn loop_response_to_llm(response : LoopResponse) -> @llm.JsonChatResponse {
   let tool_calls : Array[@llm.JsonChatToolCall] = []
   for tc in response.tool_calls {
-    tool_calls.push(
-      @llm.JsonChatToolCall::new(tc.id, tc.name, tc.arguments),
-    )
+    tool_calls.push(@llm.JsonChatToolCall::new(tc.id, tc.name, tc.arguments))
   }
   @llm.JsonChatResponse::new(
     response.content,

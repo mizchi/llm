@@ -1,6 +1,8 @@
 ///|
 /// Parse a markdown skill file frontmatter and return `(metadata, body)`.
-pub fn parse_skill_frontmatter(content : String) -> (Map[String, String]?, String) {
+pub fn parse_skill_frontmatter(
+  content : String,
+) -> (Map[String, String]?, String) {
   if not(content.has_prefix("---\n")) {
     return (None, content)
   }
@@ -92,7 +94,8 @@ pub fn skill_metadata_is_always(
         meta.get("metadata"),
         scope_key,
       )
-      let always_scoped = match skill_json_get_bool_field(scoped_meta, "always") {
+      let always_scoped = match
+        skill_json_get_bool_field(scoped_meta, "always") {
         Some(v) => v
         None => false
       }

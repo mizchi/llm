@@ -63,18 +63,20 @@ test "run_agent_loop executes tool call and continues" {
   let saw_tool_result = Ref::new(false)
   let result = run_agent_loop(
     [{ "role": "user".to_json(), "content": "echo hi".to_json() }],
-    [{
-      "type": "function".to_json(),
-      "function": {
-        "name": "echo".to_json(),
-        "description": "echo text".to_json(),
-        "parameters": {
-          "type": "object".to_json(),
-          "properties": { "text": { "type": "string".to_json() } },
-          "required": Json::array(["text".to_json()]),
+    [
+      {
+        "type": "function".to_json(),
+        "function": {
+          "name": "echo".to_json(),
+          "description": "echo text".to_json(),
+          "parameters": {
+            "type": "object".to_json(),
+            "properties": { "text": { "type": "string".to_json() } },
+            "required": Json::array(["text".to_json()]),
+          },
         },
       },
-    }],
+    ],
     "dummy-model",
     5,
     fn(messages, _tools, _model) {

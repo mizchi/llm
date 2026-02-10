@@ -26,14 +26,15 @@ test "run_runtime_turn stores user/assistant history for user inbound" {
     "u1",
     "hello",
   )
-  let result = run_runtime_turn(
-    sessions,
-    req,
-    fn(history, current, _channel, _chat_id) {
-      seen_history_len.val = history.length()
-      "reply:" + current
-    },
-  )
+  let result = run_runtime_turn(sessions, req, fn(
+    history,
+    current,
+    _channel,
+    _chat_id,
+  ) {
+    seen_history_len.val = history.length()
+    "reply:" + current
+  })
   assert_eq(seen_history_len.val, 0)
   assert_eq(result.channel, "cli")
   assert_eq(result.chat_id, "42")
@@ -63,11 +64,14 @@ test "run_runtime_turn prefixes system sender and drops outbound metadata" {
     "background done",
     metadata={ "origin": "x".to_json() },
   )
-  let result = run_runtime_turn(
-    sessions,
-    req,
-    fn(_history, _current, _channel, _chat_id) { "summary" },
-  )
+  let result = run_runtime_turn(sessions, req, fn(
+    _history,
+    _current,
+    _channel,
+    _chat_id,
+  ) {
+    "summary"
+  })
   assert_eq(result.content, "summary")
   assert_eq(result.metadata.length(), 0)
   let session = sessions.get_or_create("telegram:abc")

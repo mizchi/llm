@@ -89,12 +89,16 @@ test "llm_chat_provider converts messages and tools" {
       },
     },
   ]
-  let response = (adapter : &ChatProvider).chat(messages, tools, "ignored-model")
+  let response = (adapter : &ChatProvider).chat(
+    messages, tools, "ignored-model",
+  )
   assert_eq(response.content, "answer")
   assert_eq(provider.received_messages.length(), 4)
   assert_eq(provider.received_tools.length(), 1)
   let assistant_json = provider.received_messages[2].to_openai_json()
-  assert_true(not(provider_json_get_field(assistant_json, "tool_calls") is None))
+  assert_true(
+    not(provider_json_get_field(assistant_json, "tool_calls") is None),
+  )
   let tool_json = provider.received_messages[3].to_openai_json()
   inspect(provider_json_get_string(tool_json, "role"), content="Some(\"tool\")")
   inspect(

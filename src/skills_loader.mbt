@@ -25,10 +25,7 @@ pub fn SkillsLoader::register_workspace_skill(
     path
   }
   self.workspace_skills[name] = SkillEntry::new(
-    name,
-    skill_path,
-    "workspace",
-    content,
+    name, skill_path, "workspace", content,
   )
 }
 
@@ -45,10 +42,7 @@ pub fn SkillsLoader::register_builtin_skill(
     path
   }
   self.builtin_skills[name] = SkillEntry::new(
-    name,
-    skill_path,
-    "builtin",
-    content,
+    name, skill_path, "builtin", content,
   )
 }
 
@@ -64,14 +58,7 @@ pub fn SkillsLoader::list_skills(
     let skill = entry.1
     let available = self.is_skill_available(skill.name, bins, env)
     if not(filter_unavailable) || available {
-      out.push(
-        SkillInfo::new(
-          skill.name,
-          skill.path,
-          skill.source,
-          available,
-        ),
-      )
+      out.push(SkillInfo::new(skill.name, skill.path, skill.source, available))
     }
   }
   for entry in self.builtin_skills.to_array() {
@@ -82,14 +69,7 @@ pub fn SkillsLoader::list_skills(
     let skill = entry.1
     let available = self.is_skill_available(skill.name, bins, env)
     if not(filter_unavailable) || available {
-      out.push(
-        SkillInfo::new(
-          skill.name,
-          skill.path,
-          skill.source,
-          available,
-        ),
-      )
+      out.push(SkillInfo::new(skill.name, skill.path, skill.source, available))
     }
   }
   out
@@ -167,11 +147,10 @@ pub fn SkillsLoader::get_always_skills(
   for skill in self.list_skills(filter_unavailable=true, bins~, env~) {
     let metadata = self.get_skill_metadata(skill.name)
     match metadata {
-      Some(meta) => {
+      Some(meta) =>
         if skill_metadata_is_always(Some(meta)) {
           out.push(skill.name)
         }
-      }
       None => ()
     }
   }
@@ -218,8 +197,7 @@ fn SkillsLoader::get_missing_requirements(
   env : Map[String, String],
 ) -> String {
   match self.get_skill_metadata(name) {
-    Some(meta) =>
-      skill_metadata_missing_requirements(Some(meta), bins~, env~)
+    Some(meta) => skill_metadata_missing_requirements(Some(meta), bins~, env~)
     None => ""
   }
 }

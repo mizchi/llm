@@ -21,12 +21,10 @@ test "cron service runs due every job and updates state" {
   )
   let job = service.add_job("tick", CronSchedule::every(1000), "ping")
   inspect(job.state.next_run_at_ms, content="Some(2000)")
-
   now.val = 2500
   let count = service.run_due()
   assert_eq(count, 1)
   inspect(executed, content="[\"ping\"]")
-
   let jobs = service.list_jobs()
   assert_eq(jobs.length(), 1)
   inspect(jobs[0].state.last_status, content="Some(\"ok\")")
@@ -44,7 +42,6 @@ test "cron service removes one-shot job when delete_after_run is true" {
     delete_after_run=true,
   )
   assert_eq(job.delete_after_run, true)
-
   now.val = 2000
   ignore(service.run_due())
   let all = service.list_jobs(include_disabled=true)
@@ -56,7 +53,6 @@ test "cron service enable and remove" {
   let now = Ref::new(1000)
   let service = CronService::new(clock=fn() { now.val })
   let job = service.add_job("job", CronSchedule::every(1000), "hi")
-
   let disabled = service.enable_job(job.id, enabled=false)
   match disabled {
     Some(j) => assert_eq(j.enabled, false)

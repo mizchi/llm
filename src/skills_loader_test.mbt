@@ -49,7 +49,10 @@ test "skills loader filters unavailable skills by requirements" {
       "body",
     ),
   )
-  let none = loader.list_skills(bins=loader_dummy_bins([]), env=loader_dummy_env([]))
+  let none = loader.list_skills(
+    bins=loader_dummy_bins([]),
+    env=loader_dummy_env([]),
+  )
   assert_eq(none.length(), 0)
   let available = loader.list_skills(
     bins=loader_dummy_bins(["tmux"]),
@@ -64,8 +67,7 @@ test "skills loader builds summary and always skills" {
   loader.register_workspace_skill(
     "cron",
     loader_skill_with_meta(
-      "description: cron helper\nmetadata: {\"nanobot\":{\"always\":true}}",
-      "cron body",
+      "description: cron helper\nmetadata: {\"nanobot\":{\"always\":true}}", "cron body",
     ),
   )
   let summary = loader.build_skills_summary()

@@ -106,15 +106,11 @@ test "ToolDef::new constructs definition" {
 ///|
 test "ToolRegistry::register_def and execute_result" {
   let registry = ToolRegistry::new()
-  let tool = ToolDef::new(
-    "echo",
-    "echo text",
-    {
-      "type": "object".to_json(),
-      "properties": { "text": { "type": "string".to_json() } },
-      "required": Json::array(["text".to_json()]),
-    },
-  )
+  let tool = ToolDef::new("echo", "echo text", {
+    "type": "object".to_json(),
+    "properties": { "text": { "type": "string".to_json() } },
+    "required": Json::array(["text".to_json()]),
+  })
   registry.register_def(tool, fn(input) {
     let text = match input {
       Object(map) =>

@@ -12,12 +12,7 @@ pub fn llm_chat_provider(provider : &@llm.Provider) -> &ChatProvider {
 }
 
 ///|
-impl ChatProvider for LlmChatProvider with chat(
-  self,
-  messages,
-  tools,
-  _model,
-) {
+impl ChatProvider for LlmChatProvider with chat(self, messages, tools, _model) {
   let llm_messages = to_llm_messages(messages)
   let llm_tools = to_llm_tools(tools)
   let result = @llm.collect(self.provider, llm_messages, tools=llm_tools)
@@ -182,7 +177,10 @@ fn provider_json_get_json_field(obj : Json, key : String) -> Json? {
 }
 
 ///|
-fn provider_json_get_object_field(obj : Json, key : String) -> Map[String, Json]? {
+fn provider_json_get_object_field(
+  obj : Json,
+  key : String,
+) -> Map[String, Json]? {
   match provider_json_get_json_field(obj, key) {
     Some(Object(map)) => Some(map)
     _ => None

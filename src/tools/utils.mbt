@@ -75,7 +75,10 @@ pub fn normalize_path(path : String) -> String {
 }
 
 ///|
-pub fn resolve_path(path : String, allowed_dir : String?) -> Result[String, String] {
+pub fn resolve_path(
+  path : String,
+  allowed_dir : String?,
+) -> Result[String, String] {
   let normalized = normalize_path(path)
   if normalized.contains("../") || normalized.contains("..\\") {
     return Err("Path traversal detected")
@@ -97,29 +100,21 @@ pub fn resolve_path(path : String, allowed_dir : String?) -> Result[String, Stri
 pub fn guard_command(command : String, restrict_to_workspace : Bool) -> String? {
   let lower = command.trim().to_string().to_lower()
   let deny_fragments = [
-    "rm -rf",
-    "rm -fr",
-    "del /f",
-    "del /q",
-    "rmdir /s",
-    "format",
-    "mkfs",
-    "diskpart",
-    "dd if=",
-    "> /dev/sd",
-    "shutdown",
-    "reboot",
-    "poweroff",
-    ":(){",
+    "rm -rf", "rm -fr", "del /f", "del /q", "rmdir /s", "format", "mkfs", "diskpart",
+    "dd if=", "> /dev/sd", "shutdown", "reboot", "poweroff", ":(){",
   ]
   for frag in deny_fragments {
     if lower.contains(frag) {
-      return Some("Error: Command blocked by safety guard (dangerous pattern detected)")
+      return Some(
+        "Error: Command blocked by safety guard (dangerous pattern detected)",
+      )
     }
   }
   if restrict_to_workspace {
     if lower.contains("../") || lower.contains("..\\") {
-      return Some("Error: Command blocked by safety guard (path traversal detected)")
+      return Some(
+        "Error: Command blocked by safety guard (path traversal detected)",
+      )
     }
   }
   None

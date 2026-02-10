@@ -24,8 +24,7 @@ fn skill_with_frontmatter(meta_lines : String, body : String) -> String {
 ///|
 test "parse_skill_frontmatter and strip_skill_frontmatter" {
   let source = skill_with_frontmatter(
-    "description: \"shell helper\"\nalways: true",
-    "body text",
+    "description: \"shell helper\"\nalways: true", "body text",
   )
   let (meta, _body) = parse_skill_frontmatter(source)
   match meta {
@@ -71,11 +70,9 @@ test "skill metadata always flag supports root and namespaced values" {
   let root_meta : Map[String, String] = {}
   root_meta["always"] = "yes"
   assert_true(skill_metadata_is_always(Some(root_meta)))
-
   let ns_meta : Map[String, String] = {}
   ns_meta["metadata"] = "{\"nanobot\":{\"always\":true}}"
   assert_true(skill_metadata_is_always(Some(ns_meta)))
-
   let none_meta : Map[String, String] = {}
   assert_false(skill_metadata_is_always(Some(none_meta)))
 }

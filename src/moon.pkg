@@ -1,4 +1,4 @@
 import {
   "moonbitlang/core/json",
-  "mizchi/llm/tools" as @tools,
+  "mizchi/llm/tools" @tools,
 }

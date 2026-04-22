@@ -80,5 +80,5 @@ test "ToolRegistry::execute_validated executes valid input" {
     "count": (2).to_json(),
   })
   assert_eq(result, "ok")
-  assert_true(not(is_error))
+  assert_true(!is_error)
 }

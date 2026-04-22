@@ -96,7 +96,7 @@ pub fn Message::to_openai_json(self : Message) -> Json {
       let result : Map[String, Json] = {}
       result["role"] = "assistant".to_json()
       result["content"] = text_parts.join("").to_json()
-      if not(tool_calls.is_empty()) {
+      if !tool_calls.is_empty() {
         result["tool_calls"] = Json::array(tool_calls)
       }
       return Json::object(result)

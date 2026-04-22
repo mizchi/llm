@@ -47,7 +47,7 @@ fn build_anthropic_body(
   body["model"] = model.to_json()
   body["max_tokens"] = Json::number(max_tokens.to_double())
   body["stream"] = Json::boolean(true)
-  if not(system_prompt.is_empty()) {
+  if !system_prompt.is_empty() {
     body["system"] = system_prompt.to_json()
   }
   let msgs : Array[Json] = []
@@ -58,7 +58,7 @@ fn build_anthropic_body(
     }
   }
   body["messages"] = Json::array(msgs)
-  if not(tools.is_empty()) {
+  if !tools.is_empty() {
     body["tools"] = Json::array(tools.map(@llm.ToolDef::to_anthropic_json))
   }
   Json::object(body)

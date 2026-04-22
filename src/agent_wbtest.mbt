@@ -208,7 +208,7 @@ test "SchemaBuilder - basic" {
   let parsed = @json.parse(s) catch { _ => panic() }
   inspect(json_get_string(parsed, "type"), content="Some(\"object\")")
   let props = json_get_object(parsed, "properties")
-  assert_true(not(props is None))
+  assert_true(!(props is None))
   let required = json_get_array(parsed, "required")
   match required {
     Some(arr) => inspect(arr.length(), content="2")
@@ -232,7 +232,7 @@ test "SchemaBuilder - string_enum" {
   match props {
     Some(p) => {
       let unit = json_get_object(p, "unit")
-      assert_true(not(unit is None))
+      assert_true(!(unit is None))
     }
     None => panic()
   }
@@ -247,7 +247,7 @@ test "SchemaBuilder - array type" {
   let s = schema.stringify()
   let parsed = @json.parse(s) catch { _ => panic() }
   let props = json_get_object(parsed, "properties")
-  assert_true(not(props is None))
+  assert_true(!(props is None))
 }
 
 ///|

@@ -71,6 +71,6 @@ test "ToolDef::to_openai_json" {
       #|Some("function")
     ),
   )
-  let has_func = not(json_get_object(j, "function") is None)
+  let has_func = !(json_get_object(j, "function") is None)
   inspect(has_func, content="true")
 }

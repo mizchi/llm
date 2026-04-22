@@ -57,7 +57,7 @@ pub fn SkillsLoader::list_skills(
   for entry in self.workspace_skills.to_array() {
     let skill = entry.1
     let available = self.is_skill_available(skill.name, bins, env)
-    if not(filter_unavailable) || available {
+    if !filter_unavailable || available {
       out.push(SkillInfo::new(skill.name, skill.path, skill.source, available))
     }
   }
@@ -68,7 +68,7 @@ pub fn SkillsLoader::list_skills(
     }
     let skill = entry.1
     let available = self.is_skill_available(skill.name, bins, env)
-    if not(filter_unavailable) || available {
+    if !filter_unavailable || available {
       out.push(SkillInfo::new(skill.name, skill.path, skill.source, available))
     }
   }
@@ -125,9 +125,9 @@ pub fn SkillsLoader::build_skills_summary(
       "</description>",
     )
     lines.push("    <location>" + escape_xml(skill.path) + "</location>")
-    if not(skill.available) {
+    if !skill.available {
       let missing = self.get_missing_requirements(skill.name, bins, env)
-      if not(missing.is_empty()) {
+      if !missing.is_empty() {
         lines.push("    <requires>" + escape_xml(missing) + "</requires>")
       }
     }

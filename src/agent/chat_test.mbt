@@ -62,6 +62,6 @@ test "add_assistant_message supports optional tool_calls and reasoning" {
   )
   let out2 = add_assistant_message([], None, None, None)
   inspect(chat_json_get_string_field(out2[0], "content"), content="Some(\"\")")
-  assert_true(not(chat_json_has_field(out2[0], "tool_calls")))
-  assert_true(not(chat_json_has_field(out2[0], "reasoning_content")))
+  assert_true(!chat_json_has_field(out2[0], "tool_calls"))
+  assert_true(!chat_json_has_field(out2[0], "reasoning_content"))
 }

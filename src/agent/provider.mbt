@@ -54,7 +54,7 @@ fn to_llm_message(msg : Json) -> @llm.Message? {
 fn assistant_json_to_llm(msg : Json) -> @llm.Message {
   let blocks : Array[@llm.ContentBlock] = []
   let text = json_message_text(msg)
-  if not(text.is_empty()) {
+  if !text.is_empty() {
     blocks.push(@llm.Text(text))
   }
   match provider_json_get_json_field(msg, "tool_calls") {

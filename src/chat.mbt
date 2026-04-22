@@ -90,7 +90,7 @@ fn build_assistant_message(
   let msg : Map[String, Json] = {}
   msg["role"] = "assistant".to_json()
   msg["content"] = content.to_json()
-  if not(tool_calls.is_empty()) {
+  if !tool_calls.is_empty() {
     let arr : Array[Json] = []
     for tc in tool_calls {
       arr.push(tool_call_to_openai_json(tc))
@@ -99,7 +99,7 @@ fn build_assistant_message(
   }
   match reasoning_content {
     Some(reasoning) =>
-      if not(reasoning.is_empty()) {
+      if !reasoning.is_empty() {
         msg["reasoning_content"] = reasoning.to_json()
       }
     None => ()

@@ -3,7 +3,7 @@
 pub fn parse_skill_frontmatter(
   content : String,
 ) -> (Map[String, String]?, String) {
-  if not(content.has_prefix("---\n")) {
+  if !content.has_prefix("---\n") {
     return (None, content)
   }
   match content.find("\n---\n") {
@@ -155,7 +155,7 @@ fn skill_check_requirements(
   match requires {
     Some(requires_obj) => {
       for bin in skill_json_get_string_array(requires_obj, "bins") {
-        if not(bins.contains(bin)) {
+        if !bins.contains(bin) {
           return false
         }
       }
@@ -181,7 +181,7 @@ fn skill_collect_missing_requirements(
   match skill_json_get_object_field(scoped_meta, "requires") {
     Some(requires_obj) => {
       for bin in skill_json_get_string_array(requires_obj, "bins") {
-        if not(bins.contains(bin)) {
+        if !bins.contains(bin) {
           missing.push("CLI: " + bin)
         }
       }

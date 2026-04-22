@@ -156,7 +156,7 @@ pub fn SchemaBuilder::build(self : SchemaBuilder) -> Json {
   let schema : Map[String, Json] = {}
   schema["type"] = "object".to_json()
   schema["properties"] = Json::object(self.properties)
-  if not(self.required.is_empty()) {
+  if !self.required.is_empty() {
     schema["required"] = Json::array(self.required.map(fn(s) { s.to_json() }))
   }
   Json::object(schema)
@@ -238,7 +238,7 @@ pub fn ToolRegistry::execute_result(
         None => Err(ToolNotFound(name))
         Some(handler) => {
           let errors = validate_tool_input(input, tool.input_schema)
-          if not(errors.is_empty()) {
+          if !errors.is_empty() {
             return Err(InvalidParams(tool_name=name, errors~))
           }
           Ok(handler(input))
@@ -257,7 +257,7 @@ pub fn ToolRegistry::execute_validated(
   match self.find_tool(name) {
     Some(tool) => {
       let errors = validate_tool_input(input, tool.input_schema)
-      if not(errors.is_empty()) {
+      if !errors.is_empty() {
         return (
           "Invalid tool input for '" + name + "': " + errors.join("; "),
           true,

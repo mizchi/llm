@@ -116,14 +116,14 @@ fn build_openai_body(
   body["stream_options"] = Json::object(stream_options)
   // Build messages array with system prompt
   let msgs : Array[Json] = []
-  if not(system_prompt.is_empty()) {
+  if !system_prompt.is_empty() {
     msgs.push(@llm.Message::system(system_prompt).to_openai_json())
   }
   for msg in messages {
     msgs.push(msg.to_openai_json())
   }
   body["messages"] = Json::array(msgs)
-  if not(tools.is_empty()) {
+  if !tools.is_empty() {
     body["tools"] = Json::array(tools.map(@llm.ToolDef::to_openai_json))
   }
   Json::object(body)
@@ -172,7 +172,7 @@ fn extract_openai_tool_fragments(
         let raw_id = get_str(tc, "id", "")
         let tool_id = if index >= 0 {
           index.to_string()
-        } else if not(raw_id.is_empty()) {
+        } else if !raw_id.is_empty() {
           raw_id
         } else {
           "0"
@@ -182,7 +182,7 @@ fn extract_openai_tool_fragments(
             (get_str(func, "name", ""), get_str(func, "arguments", ""))
           None => ("", "")
         }
-        if not(name.is_empty()) || not(arguments.is_empty()) {
+        if !name.is_empty() || !arguments.is_empty() {
           out.push((tool_id, name, arguments))
         }
       }
@@ -204,11 +204,11 @@ fn apply_openai_tool_fragments(
     let (tool_id, name_delta, args_delta) = fragment
     match active_tools.get(tool_id) {
       Some((current_name, input_buf)) => {
-        if current_name.is_empty() && not(name_delta.is_empty()) {
+        if current_name.is_empty() && !name_delta.is_empty() {
           active_tools[tool_id] = (name_delta, input_buf)
           out.push(@llm.StreamEvent::ToolCallStart(id=tool_id, name=name_delta))
         }
-        if not(args_delta.is_empty()) {
+        if !args_delta.is_empty() {
           input_buf.write_string(args_delta)
           out.push(
             @llm.StreamEvent::ToolCallDelta(id=tool_id, input_delta=args_delta),
@@ -217,15 +217,15 @@ fn apply_openai_tool_fragments(
       }
       None => {
         let input_buf = StringBuilder::new()
-        if not(args_delta.is_empty()) {
+        if !args_delta.is_empty() {
           input_buf.write_string(args_delta)
         }
         let initial_name = if name_delta.is_empty() { "" } else { name_delta }
         active_tools[tool_id] = (initial_name, input_buf)
-        if not(name_delta.is_empty()) {
+        if !name_delta.is_empty() {
           out.push(@llm.StreamEvent::ToolCallStart(id=tool_id, name=name_delta))
         }
-        if not(args_delta.is_empty()) {
+        if !args_delta.is_empty() {
           out.push(
             @llm.StreamEvent::ToolCallDelta(id=tool_id, input_delta=args_delta),
           )
@@ -316,7 +316,7 @@ pub fn parse_openai_event(data : String) -> @llm.StreamEvent? {
   // Check for text content
   match @llm.json_get_string(delta, "content") {
     Some(text) =>
-      if not(text.is_empty()) {
+      if !text.is_empty() {
         return Some(@llm.StreamEvent::TextDelta(text))
       }
     None => ()
@@ -331,7 +331,7 @@ pub fn parse_openai_event(data : String) -> @llm.StreamEvent? {
           Some(func) => {
             let name = get_str(func, "name", "")
             let arguments = get_str(func, "arguments", "")
-            if not(name.is_empty()) {
+            if !name.is_empty() {
               // Tool call start
               return Some(
                 @llm.StreamEvent::ToolCallStart(
@@ -340,7 +340,7 @@ pub fn parse_openai_event(data : String) -> @llm.StreamEvent? {
                 ),
               )
             }
-            if not(arguments.is_empty()) {
+            if !arguments.is_empty() {
               return Some(
                 @llm.StreamEvent::ToolCallDelta(
                   id=if id.is_empty() { index.to_string() } else { id },

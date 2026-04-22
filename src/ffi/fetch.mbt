@@ -93,7 +93,7 @@ fn build_curl_args(
       }
     _ => ()
   }
-  if not(body.is_empty()) {
+  if !body.is_empty() {
     args.push("-d")
     args.push(body)
   }
@@ -114,7 +114,7 @@ fn split_lines(s : String) -> Array[String] {
     }
   }
   let last = buf.to_string()
-  if not(last.is_empty()) {
+  if !last.is_empty() {
     result.push(last)
   }
   result

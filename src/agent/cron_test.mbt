@@ -60,5 +60,5 @@ test "cron service enable and remove" {
   }
   assert_eq(service.list_jobs().length(), 0)
   assert_true(service.remove_job(job.id))
-  assert_true(not(service.remove_job(job.id)))
+  assert_true(!service.remove_job(job.id))
 }

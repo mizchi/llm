@@ -5,7 +5,5 @@ import {
 }
 
 options(
-  targets: {
-    "openai_async.mbt": [ "js" ],
-  },
+  targets: { "openai_async.mbt": [ "js" ] },
 )

@@ -59,7 +59,7 @@ test "session manager delete removes session" {
   s.add_message("user", "x")
   manager.save(s)
   assert_true(manager.delete("cli:gone"))
-  assert_true(not(manager.delete("cli:gone")))
+  assert_true(!manager.delete("cli:gone"))
   let listed = manager.list_sessions()
   inspect(listed.length(), content="0")
 }

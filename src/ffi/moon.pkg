@@ -5,8 +5,8 @@ import {
 options(
   "native-stub": [ "native_stub.c" ],
   targets: {
-    "raw_js.mbt": [ "js" ],
     "async_js.mbt": [ "js" ],
+    "raw_js.mbt": [ "js" ],
     "raw_native.mbt": [ "native" ],
     "raw_wasm.mbt": [ "wasm", "wasm-gc" ],
     "string_conv.mbt": [ "native" ],

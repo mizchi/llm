@@ -40,7 +40,7 @@ pub fn parse_claude_code_line(line : String) -> @llm.StreamEvent? {
                 }
               }
               let text = buf.to_string()
-              if not(text.is_empty()) {
+              if !text.is_empty() {
                 Some(@llm.StreamEvent::TextDelta(text))
               } else {
                 None
@@ -88,7 +88,7 @@ pub impl @llm.Provider for ClaudeCodeProvider with stream(
   let prompt = StringBuilder::new()
   for msg in messages {
     let text = msg.get_text()
-    if not(text.is_empty()) {
+    if !text.is_empty() {
       prompt.write_string(text)
       prompt.write_string("\n")
     }
@@ -98,11 +98,11 @@ pub impl @llm.Provider for ClaudeCodeProvider with stream(
   let args : Array[String] = [
     "-p", prompt_str, "--output-format", "stream-json", "--verbose",
   ]
-  if not(self.system_prompt.is_empty()) {
+  if !self.system_prompt.is_empty() {
     args.push("--system-prompt")
     args.push(self.system_prompt)
   }
-  if not(self.model.is_empty()) {
+  if !self.model.is_empty() {
     args.push("--model")
     args.push(self.model)
   }

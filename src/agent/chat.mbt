@@ -34,14 +34,14 @@ pub fn add_assistant_message(
   }
   match tool_calls {
     Some(calls) =>
-      if not(calls.is_empty()) {
+      if !calls.is_empty() {
         msg["tool_calls"] = Json::array(calls)
       }
     None => ()
   }
   match reasoning_content {
     Some(reasoning) =>
-      if not(reasoning.is_empty()) {
+      if !reasoning.is_empty() {
         msg["reasoning_content"] = reasoning.to_json()
       }
     None => ()

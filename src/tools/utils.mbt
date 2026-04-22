@@ -122,7 +122,7 @@ pub fn guard_command(command : String, restrict_to_workspace : Bool) -> String? 
 
 ///|
 pub fn validate_url(url : String) -> Result[Unit, String] {
-  if not(url.has_prefix("http://") || url.has_prefix("https://")) {
+  if !(url.has_prefix("http://") || url.has_prefix("https://")) {
     return Err("Only http/https allowed")
   }
   let rest = if url.has_prefix("https://") {

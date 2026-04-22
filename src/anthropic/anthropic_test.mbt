@@ -3,7 +3,7 @@ test "parse_anthropic_event - message_start" {
   let data =
     #|{"type":"message_start","message":{"id":"msg_1"}}
   let event = parse_anthropic_event(data)
-  inspect(not(event is None), content="true")
+  inspect(!(event is None), content="true")
 }
 
 ///|

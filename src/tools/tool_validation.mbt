@@ -106,7 +106,7 @@ fn validate_enum(
 ) -> Unit {
   match schema_json_field(schema, "enum") {
     Some(Array(items)) =>
-      if not(json_array_contains(items, value)) {
+      if !json_array_contains(items, value) {
         errors.push(label + " must be one of " + Json::array(items).stringify())
       }
     _ => ()
@@ -175,7 +175,7 @@ fn validate_required_fields(
       for required in required_list {
         match required {
           String(field_name) =>
-            if not(map.contains(field_name)) {
+            if !map.contains(field_name) {
               errors.push("missing required " + dot_path(path, field_name))
             }
           _ => ()

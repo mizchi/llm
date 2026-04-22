@@ -214,7 +214,7 @@ pub fn CronService::run_job(
 ) -> Bool {
   for i in 0..<self.jobs.length() {
     if self.jobs[i].id == job_id {
-      if not(force) && not(self.jobs[i].enabled) {
+      if !force && !self.jobs[i].enabled {
         return false
       }
       self.execute_job_at_index(i)
@@ -262,7 +262,7 @@ pub fn CronService::status(self : CronService) -> Map[String, Json] {
 fn CronService::next_wake_at_ms(self : CronService) -> Int? {
   let mut min_next : Int? = None
   for job in self.jobs {
-    if not(job.enabled) {
+    if !job.enabled {
       continue
     }
     match job.state.next_run_at_ms {

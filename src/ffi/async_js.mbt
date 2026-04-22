@@ -49,11 +49,11 @@ extern "js" fn _promise_then_catch(
 /// promise rejection as an error value.
 pub async fn[T] Promise::wait(self : Promise[T]) -> T {
   async_suspend(fn(ok, err) {
-    _promise_then_catch(
-      self.to_any(),
-      fn(v : JsValue) { ok(identity(v)) },
-      fn(e : JsValue) { err(identity(e)) },
-    )
+    _promise_then_catch(self.to_any(), fn(v : JsValue) { ok(identity(v)) }, fn(
+      e : JsValue,
+    ) {
+      err(identity(e))
+    })
   })
 }
 

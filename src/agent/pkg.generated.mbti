@@ -96,8 +96,7 @@ pub enum CronScheduleKind {
   At
   Every
   Cron
-}
-pub impl Eq for CronScheduleKind
+} derive(Eq)
 
 pub struct CronService {
   jobs : Array[CronJob]
@@ -151,8 +150,7 @@ pub fn RuntimeToolContext::set(Self, String, String) -> Unit
 pub(all) enum RuntimeTurnKind {
   UserInbound
   SystemInbound
-}
-pub impl Eq for RuntimeTurnKind
+} derive(Eq)
 
 pub struct RuntimeTurnRequest {
   kind : RuntimeTurnKind

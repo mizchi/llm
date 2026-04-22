@@ -3,3 +3,9 @@ import {
   "mizchi/llm",
   "mizchi/llm/ffi",
 }
+
+options(
+  targets: {
+    "openai_async.mbt": [ "js" ],
+  },
+)

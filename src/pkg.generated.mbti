@@ -151,10 +151,9 @@ pub(all) enum Role {
   Assistant
   System
   Tool
-}
+} derive(Eq)
 pub fn Role::from_string(String) -> Self
 pub fn Role::to_string(Self) -> String
-pub impl Eq for Role
 pub impl Show for Role
 
 pub(all) struct SkillEntry {

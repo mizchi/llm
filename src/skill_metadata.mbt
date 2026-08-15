@@ -24,7 +24,7 @@ pub fn parse_skill_frontmatter(
 ///|
 /// Remove frontmatter and return trimmed skill markdown body.
 pub fn strip_skill_frontmatter(content : String) -> String {
-  parse_skill_frontmatter(content).1.trim().to_string()
+  parse_skill_frontmatter(content).1.trim().to_owned()
 }
 
 ///|
@@ -47,8 +47,8 @@ pub fn skill_metadata_description(
 /// Evaluate whether a skill is runnable in the current environment.
 pub fn skill_metadata_is_available(
   metadata : Map[String, String]?,
-  bins? : Map[String, Bool] = {},
-  env? : Map[String, String] = {},
+  bins? : Map[String, Bool] = Map([]),
+  env? : Map[String, String] = Map([]),
   scope_key? : String = "nanobot",
 ) -> Bool {
   match metadata {
@@ -66,8 +66,8 @@ pub fn skill_metadata_is_available(
 /// Collect missing requirement text (e.g. `CLI: tmux, ENV: OPENAI_API_KEY`).
 pub fn skill_metadata_missing_requirements(
   metadata : Map[String, String]?,
-  bins? : Map[String, Bool] = {},
-  env? : Map[String, String] = {},
+  bins? : Map[String, Bool] = Map([]),
+  env? : Map[String, String] = Map([]),
   scope_key? : String = "nanobot",
 ) -> String {
   match metadata {
@@ -107,19 +107,19 @@ pub fn skill_metadata_is_always(
 
 ///|
 fn parse_skill_frontmatter_map(header : String) -> Map[String, String] {
-  let out : Map[String, String] = {}
+  let out : Map[String, String] = Map([])
   for line_view in header.split("\n") {
-    let line = line_view.to_string().trim().to_string()
+    let line = line_view.to_owned().trim().to_owned()
     if line.is_empty() {
       continue
     }
     match line.find(":") {
       Some(idx) => {
-        let key = line.unsafe_substring(start=0, end=idx).trim().to_string()
+        let key = line.unsafe_substring(start=0, end=idx).trim().to_owned()
         let value = line
           .unsafe_substring(start=idx + 1, end=line.length())
           .trim()
-          .to_string()
+          .to_owned()
         out[key] = skill_unquote(value)
       }
       None => ()
@@ -247,7 +247,7 @@ fn skill_json_get_bool_field(obj : Json, key : String) -> Bool? {
 fn skill_is_string_true(v : String?) -> Bool {
   match v {
     Some(raw) => {
-      let s = raw.trim().to_string().to_lower()
+      let s = raw.trim().to_owned().to_lower()
       s == "true" || s == "1" || s == "yes"
     }
     None => false

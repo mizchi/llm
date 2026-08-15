@@ -81,4 +81,3 @@ pub fn ToolRegistry::register_def(Self, ToolDef, (Json) -> String) -> Unit
 // Type aliases
 
 // Traits
-

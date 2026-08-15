@@ -12,7 +12,7 @@ pub fn MockProvider::new(responses : Array[Array[StreamEvent]]) -> MockProvider 
 }
 
 ///|
-impl Provider for MockProvider with stream(self, _messages, _tools, handler) {
+impl Provider for MockProvider with fn stream(self, _messages, _tools, handler) {
   if self.call_count < self.responses.length() {
     let events = self.responses[self.call_count]
     self.call_count += 1
@@ -23,7 +23,7 @@ impl Provider for MockProvider with stream(self, _messages, _tools, handler) {
 }
 
 ///|
-impl Provider for MockProvider with name(_self) -> String {
+impl Provider for MockProvider with fn name(_self) -> String {
   "mock"
 }
 

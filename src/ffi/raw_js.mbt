@@ -1,14 +1,4 @@
 ///|
-/// JS primitive: get environment variable value.
-fn get_env_raw(name : String) -> String {
-  js_get_env(name)
-}
-
-///|
-extern "js" fn js_get_env(name : String) -> String =
-  #|(name) => { try { return globalThis.process.env[name] || ''; } catch { return ''; } }
-
-///|
 /// JS primitive: run a command with args (JSON array string), return stdout.
 /// Returns "ERROR: ..." on failure.
 fn run_command(program : String, args_json : String) -> String {

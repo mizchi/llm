@@ -39,7 +39,7 @@ pub fn Session::add_message(
   content : String,
 ) -> Unit {
   let now = (self.clock)()
-  let msg : Map[String, Json] = {}
+  let msg : Map[String, Json] = Map([])
   msg["role"] = role.to_json()
   msg["content"] = content.to_json()
   msg["timestamp"] = now.to_json()

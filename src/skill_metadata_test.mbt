@@ -1,6 +1,6 @@
 ///|
 fn skill_dummy_bins(values : Array[String]) -> Map[String, Bool] {
-  let out : Map[String, Bool] = {}
+  let out : Map[String, Bool] = Map([])
   for v in values {
     out[v] = true
   }
@@ -9,7 +9,7 @@ fn skill_dummy_bins(values : Array[String]) -> Map[String, Bool] {
 
 ///|
 fn skill_dummy_env(values : Array[(String, String)]) -> Map[String, String] {
-  let out : Map[String, String] = {}
+  let out : Map[String, String] = Map([])
   for entry in values {
     out[entry.0] = entry.1
   }
@@ -39,7 +39,7 @@ test "parse_skill_frontmatter and strip_skill_frontmatter" {
 
 ///|
 test "skill metadata availability and missing requirements" {
-  let meta : Map[String, String] = {}
+  let meta : Map[String, String] = Map([])
   meta["metadata"] = "{\"nanobot\":{\"requires\":{\"bins\":[\"tmux\"],\"env\":[\"OPENAI_API_KEY\"]}}}"
   assert_false(
     skill_metadata_is_available(
@@ -67,12 +67,12 @@ test "skill metadata availability and missing requirements" {
 
 ///|
 test "skill metadata always flag supports root and namespaced values" {
-  let root_meta : Map[String, String] = {}
+  let root_meta : Map[String, String] = Map([])
   root_meta["always"] = "yes"
   assert_true(skill_metadata_is_always(Some(root_meta)))
-  let ns_meta : Map[String, String] = {}
+  let ns_meta : Map[String, String] = Map([])
   ns_meta["metadata"] = "{\"nanobot\":{\"always\":true}}"
   assert_true(skill_metadata_is_always(Some(ns_meta)))
-  let none_meta : Map[String, String] = {}
+  let none_meta : Map[String, String] = Map([])
   assert_false(skill_metadata_is_always(Some(none_meta)))
 }

@@ -9,33 +9,6 @@
 // Compiled only for the "js" target (see moon.pkg).
 
 ///|
-/// Build the OpenAI-compat request body for a non-streaming completion.
-fn build_openai_body_nonstream(
-  model : String,
-  max_tokens : Int,
-  system_prompt : String,
-  messages : Array[@llm.Message],
-  tools : Array[@llm.ToolDef],
-) -> Json {
-  let body : Map[String, Json] = {}
-  body["model"] = model.to_json()
-  body["max_tokens"] = Json::number(max_tokens.to_double())
-  body["stream"] = Json::boolean(false)
-  let msgs : Array[Json] = []
-  if !system_prompt.is_empty() {
-    msgs.push(@llm.Message::system(system_prompt).to_openai_json())
-  }
-  for msg in messages {
-    msgs.push(msg.to_openai_json())
-  }
-  body["messages"] = Json::array(msgs)
-  if !tools.is_empty() {
-    body["tools"] = Json::array(tools.map(@llm.ToolDef::to_openai_json))
-  }
-  Json::object(body)
-}
-
-///|
 /// JS-only async variant of `collect_text`. Issues a non-streaming request and
 /// returns a `Promise[String]` that resolves to the assistant text, or `""`
 /// on network/HTTP/parse error. Designed for concurrent summarization.

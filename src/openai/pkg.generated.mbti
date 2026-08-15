@@ -36,6 +36,7 @@ pub struct OpenAIProvider {
   config : @llm.ProviderConfig
   endpoint : OpenAIEndpoint
 }
+pub async fn OpenAIProvider::collect_text(Self, Array[@llm.Message], tools? : Array[@tools.ToolDef]) -> String
 pub fn OpenAIProvider::collect_text_async(Self, Array[@llm.Message], tools? : Array[@tools.ToolDef]) -> @ffi.Promise[String]
 pub fn OpenAIProvider::new(String, endpoint? : OpenAIEndpoint, model? : String, max_tokens? : Int, system_prompt? : String, base_url? : String, timeout_sec? : Int, max_retries? : Int) -> Self
 pub fn OpenAIProvider::new_compat(String, String, api_key? : String, max_tokens? : Int, system_prompt? : String, timeout_sec? : Int, max_retries? : Int) -> Self
@@ -44,4 +45,3 @@ pub impl @llm.Provider for OpenAIProvider
 // Type aliases
 
 // Traits
-

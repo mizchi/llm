@@ -24,7 +24,7 @@ fn tool_name_text(
 
 ///|
 test "apply_openai_tool_fragments keeps arguments from start chunk and later deltas" {
-  let active_tools : Map[String, (String, StringBuilder)] = {}
+  let active_tools : Map[String, (String, StringBuilder)] = Map([])
   let start_line =
     #|{"choices":[{"index":0,"delta":{"tool_calls":[{"id":"call_abc","index":0,"function":{"name":"write_file","arguments":"{\"path\":\"a.txt\""}}]},"finish_reason":null}]}
   let events1 = apply_openai_tool_fragments(start_line, active_tools)
@@ -76,4 +76,22 @@ test "extract_openai_tool_fragments handles multiple tool indexes in one chunk" 
   assert_eq(id1, "1")
   assert_eq(name1, "tool_b")
   assert_eq(args1, "{\"b\":2}")
+}
+
+///|
+test "parse_openai_collect_text_response extracts assistant content" {
+  let response =
+    #|{"choices":[{"message":{"role":"assistant","content":"Hello async"}}]}
+  assert_eq(parse_openai_collect_text_response(response), "Hello async")
+}
+
+///|
+test "parse_openai_collect_text_response rejects malformed responses" {
+  let empty_choices =
+    #|{"choices":[]}
+  let null_content =
+    #|{"choices":[{"message":{"content":null}}]}
+  assert_eq(parse_openai_collect_text_response("not json"), "")
+  assert_eq(parse_openai_collect_text_response(empty_choices), "")
+  assert_eq(parse_openai_collect_text_response(null_content), "")
 }

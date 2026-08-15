@@ -3,7 +3,7 @@ test "parse_anthropic_event - message_start" {
   let data =
     #|{"type":"message_start","message":{"id":"msg_1"}}
   let event = parse_anthropic_event(data)
-  inspect(!(event is None), content="true")
+  @debug.debug_inspect(!(event is None), content="true")
 }
 
 ///|
@@ -12,7 +12,13 @@ test "parse_anthropic_event - text_delta" {
     #|{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hello"}}
   let event = parse_anthropic_event(data)
   match event {
-    Some(@llm.StreamEvent::TextDelta(text)) => inspect(text, content="Hello")
+    Some(@llm.StreamEvent::TextDelta(text)) =>
+      @debug.debug_inspect(
+        text,
+        content=(
+          #|"Hello"
+        ),
+      )
     _ => fail("expected TextDelta")
   }
 }
@@ -24,8 +30,18 @@ test "parse_anthropic_event - tool_use_start" {
   let event = parse_anthropic_event(data)
   match event {
     Some(@llm.StreamEvent::ToolCallStart(id~, name~)) => {
-      inspect(id, content="call_1")
-      inspect(name, content="read_file")
+      @debug.debug_inspect(
+        id,
+        content=(
+          #|"call_1"
+        ),
+      )
+      @debug.debug_inspect(
+        name,
+        content=(
+          #|"read_file"
+        ),
+      )
     }
     _ => fail("expected ToolCallStart")
   }
@@ -38,7 +54,12 @@ test "parse_anthropic_event - input_json_delta" {
   let event = parse_anthropic_event(data)
   match event {
     Some(@llm.StreamEvent::ToolCallDelta(input_delta~, ..)) =>
-      inspect(input_delta, content="{\"path\":")
+      @debug.debug_inspect(
+        input_delta,
+        content=(
+          #|"{\"path\":"
+        ),
+      )
     _ => fail("expected ToolCallDelta")
   }
 }
@@ -50,7 +71,7 @@ test "parse_anthropic_event - message_delta stop" {
   let event = parse_anthropic_event(data)
   match event {
     Some(@llm.StreamEvent::MessageEnd(finish_reason~, ..)) =>
-      inspect(finish_reason, content="Stop")
+      @debug.debug_inspect(finish_reason, content="Stop")
     _ => fail("expected MessageEnd")
   }
 }
@@ -62,7 +83,7 @@ test "parse_anthropic_event - message_delta tool_use" {
   let event = parse_anthropic_event(data)
   match event {
     Some(@llm.StreamEvent::MessageEnd(finish_reason~, ..)) =>
-      inspect(finish_reason, content="ToolUse")
+      @debug.debug_inspect(finish_reason, content="ToolUse")
     _ => fail("expected MessageEnd")
   }
 }
@@ -74,7 +95,12 @@ test "parse_anthropic_event - error" {
   let event = parse_anthropic_event(data)
   match event {
     Some(@llm.StreamEvent::Error(msg)) =>
-      inspect(msg, content="model not found")
+      @debug.debug_inspect(
+        msg,
+        content=(
+          #|"model not found"
+        ),
+      )
     _ => fail("expected Error")
   }
 }
@@ -82,7 +108,7 @@ test "parse_anthropic_event - error" {
 ///|
 test "parse_anthropic_event - invalid json" {
   let event = parse_anthropic_event("not json")
-  inspect(event is None, content="true")
+  @debug.debug_inspect(event is None, content="true")
 }
 
 ///|
@@ -90,5 +116,5 @@ test "parse_anthropic_event - unknown type" {
   let data =
     #|{"type":"ping"}
   let event = parse_anthropic_event(data)
-  inspect(event is None, content="true")
+  @debug.debug_inspect(event is None, content="true")
 }

@@ -50,8 +50,8 @@ pub fn SkillsLoader::register_builtin_skill(
 pub fn SkillsLoader::list_skills(
   self : SkillsLoader,
   filter_unavailable? : Bool = true,
-  bins? : Map[String, Bool] = {},
-  env? : Map[String, String] = {},
+  bins? : Map[String, Bool] = Map([]),
+  env? : Map[String, String] = Map([]),
 ) -> Array[SkillInfo] {
   let out : Array[SkillInfo] = []
   for entry in self.workspace_skills.to_array() {
@@ -108,8 +108,8 @@ pub fn SkillsLoader::load_skills_for_context(
 ///|
 pub fn SkillsLoader::build_skills_summary(
   self : SkillsLoader,
-  bins? : Map[String, Bool] = {},
-  env? : Map[String, String] = {},
+  bins? : Map[String, Bool] = Map([]),
+  env? : Map[String, String] = Map([]),
 ) -> String {
   let all = self.list_skills(filter_unavailable=false, bins~, env~)
   if all.is_empty() {
@@ -140,8 +140,8 @@ pub fn SkillsLoader::build_skills_summary(
 ///|
 pub fn SkillsLoader::get_always_skills(
   self : SkillsLoader,
-  bins? : Map[String, Bool] = {},
-  env? : Map[String, String] = {},
+  bins? : Map[String, Bool] = Map([]),
+  env? : Map[String, String] = Map([]),
 ) -> Array[String] {
   let out : Array[String] = []
   for skill in self.list_skills(filter_unavailable=true, bins~, env~) {

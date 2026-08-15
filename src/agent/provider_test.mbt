@@ -22,7 +22,7 @@ priv struct CaptureProvider {
 }
 
 ///|
-impl @llm.Provider for CaptureProvider with stream(
+impl @llm.Provider for CaptureProvider with fn stream(
   self,
   messages,
   tools,
@@ -36,7 +36,7 @@ impl @llm.Provider for CaptureProvider with stream(
 }
 
 ///|
-impl @llm.Provider for CaptureProvider with name(_self) -> String {
+impl @llm.Provider for CaptureProvider with fn name(_self) -> String {
   "capture"
 }
 
@@ -98,8 +98,11 @@ test "llm_chat_provider converts messages and tools" {
   let assistant_json = provider.received_messages[2].to_openai_json()
   assert_true(!(provider_json_get_field(assistant_json, "tool_calls") is None))
   let tool_json = provider.received_messages[3].to_openai_json()
-  inspect(provider_json_get_string(tool_json, "role"), content="Some(\"tool\")")
-  inspect(
+  @debug.debug_inspect(
+    provider_json_get_string(tool_json, "role"),
+    content="Some(\"tool\")",
+  )
+  @debug.debug_inspect(
     provider_json_get_string(tool_json, "tool_call_id"),
     content="Some(\"c1\")",
   )

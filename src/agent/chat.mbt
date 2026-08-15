@@ -26,7 +26,7 @@ pub fn add_assistant_message(
   reasoning_content : String?,
 ) -> Array[Json] {
   let out = messages
-  let msg : Map[String, Json] = {}
+  let msg : Map[String, Json] = Map([])
   msg["role"] = "assistant".to_json()
   msg["content"] = match content {
     Some(text) => text.to_json()

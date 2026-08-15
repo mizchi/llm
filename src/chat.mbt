@@ -87,7 +87,7 @@ fn build_assistant_message(
   tool_calls : Array[JsonChatToolCall],
   reasoning_content : String?,
 ) -> Json {
-  let msg : Map[String, Json] = {}
+  let msg : Map[String, Json] = Map([])
   msg["role"] = "assistant".to_json()
   msg["content"] = content.to_json()
   if !tool_calls.is_empty() {

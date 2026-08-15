@@ -4,7 +4,13 @@ test "parse_claude_code_line - assistant text" {
     #|{"type":"assistant","message":{"content":[{"type":"text","text":"Hello!"}]}}
   let event = parse_claude_code_line(line)
   match event {
-    Some(@llm.StreamEvent::TextDelta(text)) => inspect(text, content="Hello!")
+    Some(@llm.StreamEvent::TextDelta(text)) =>
+      @debug.debug_inspect(
+        text,
+        content=(
+          #|"Hello!"
+        ),
+      )
     _ => fail("expected TextDelta")
   }
 }
@@ -16,11 +22,11 @@ test "parse_claude_code_line - result" {
   let event = parse_claude_code_line(line)
   match event {
     Some(@llm.StreamEvent::MessageEnd(finish_reason~, usage~)) => {
-      inspect(finish_reason, content="Stop")
+      @debug.debug_inspect(finish_reason, content="Stop")
       match usage {
         Some(u) => {
-          inspect(u.input_tokens, content="100")
-          inspect(u.output_tokens, content="50")
+          @debug.debug_inspect(u.input_tokens, content="100")
+          @debug.debug_inspect(u.output_tokens, content="50")
         }
         None => fail("expected usage")
       }
@@ -36,7 +42,12 @@ test "parse_claude_code_line - error" {
   let event = parse_claude_code_line(line)
   match event {
     Some(@llm.StreamEvent::Error(msg)) =>
-      inspect(msg, content="permission denied")
+      @debug.debug_inspect(
+        msg,
+        content=(
+          #|"permission denied"
+        ),
+      )
     _ => fail("expected Error")
   }
 }
@@ -44,7 +55,7 @@ test "parse_claude_code_line - error" {
 ///|
 test "parse_claude_code_line - invalid json" {
   let event = parse_claude_code_line("not json")
-  inspect(event is None, content="true")
+  @debug.debug_inspect(event is None, content="true")
 }
 
 ///|
@@ -52,7 +63,7 @@ test "parse_claude_code_line - unknown type" {
   let line =
     #|{"type":"system","data":"something"}
   let event = parse_claude_code_line(line)
-  inspect(event is None, content="true")
+  @debug.debug_inspect(event is None, content="true")
 }
 
 ///|
@@ -62,8 +73,8 @@ test "parse_claude_code_line - result without usage" {
   let event = parse_claude_code_line(line)
   match event {
     Some(@llm.StreamEvent::MessageEnd(finish_reason~, usage~)) => {
-      inspect(finish_reason, content="Stop")
-      inspect(usage is None, content="true")
+      @debug.debug_inspect(finish_reason, content="Stop")
+      @debug.debug_inspect(usage is None, content="true")
     }
     _ => fail("expected MessageEnd")
   }

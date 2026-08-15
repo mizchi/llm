@@ -34,7 +34,7 @@ pub fn LoopResponse::new(
 
 ///|
 pub(open) trait ChatProvider {
-  chat(Self, messages : Array[Json], tools : Array[Json], model : String) -> LoopResponse
+  fn chat(Self, messages : Array[Json], tools : Array[Json], model : String) -> LoopResponse
 }
 
 ///|
@@ -50,7 +50,7 @@ pub fn callback_chat_provider(
 }
 
 ///|
-impl ChatProvider for CallbackChatProvider with chat(
+impl ChatProvider for CallbackChatProvider with fn chat(
   self,
   messages,
   tools,

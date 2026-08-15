@@ -1,6 +1,6 @@
 ///|
 fn loader_dummy_bins(values : Array[String]) -> Map[String, Bool] {
-  let out : Map[String, Bool] = {}
+  let out : Map[String, Bool] = Map([])
   for v in values {
     out[v] = true
   }
@@ -9,7 +9,7 @@ fn loader_dummy_bins(values : Array[String]) -> Map[String, Bool] {
 
 ///|
 fn loader_dummy_env(values : Array[(String, String)]) -> Map[String, String] {
-  let out : Map[String, String] = {}
+  let out : Map[String, String] = Map([])
   for entry in values {
     out[entry.0] = entry.1
   }
@@ -33,7 +33,7 @@ test "skills loader prefers workspace skill over builtin" {
     loader_skill_with_meta("description: weather", "workspace"),
   )
   let loaded = loader.load_skill("weather")
-  inspect(
+  @debug.debug_inspect(
     loaded,
     content="Some(\"---\\ndescription: weather\\n---\\n\\nworkspace\")",
   )
@@ -74,5 +74,5 @@ test "skills loader builds summary and always skills" {
   assert_true(summary.contains("<skills>"))
   assert_true(summary.contains("<name>cron</name>"))
   let always = loader.get_always_skills()
-  inspect(always, content="[\"cron\"]")
+  @debug.debug_inspect(always, content="[\"cron\"]")
 }

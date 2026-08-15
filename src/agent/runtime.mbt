@@ -26,7 +26,7 @@ pub fn RuntimeTurnRequest::new(
   chat_id : String,
   sender_id : String,
   content : String,
-  metadata? : Map[String, Json] = {},
+  metadata? : Map[String, Json] = Map([]),
 ) -> RuntimeTurnRequest {
   { kind, session_key, channel, chat_id, sender_id, content, metadata }
 }

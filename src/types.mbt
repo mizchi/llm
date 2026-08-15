@@ -5,10 +5,10 @@ pub(all) enum Role {
   Assistant
   System
   Tool
-} derive(Eq)
+} derive(Eq, @debug.Debug)
 
 ///|
-pub impl Show for Role with output(self, logger) {
+pub impl Show for Role with fn output(self, logger) {
   match self {
     User => logger.write_string("user")
     Assistant => logger.write_string("assistant")
@@ -103,7 +103,7 @@ pub(all) struct ToolCall {
 pub(all) struct Usage {
   input_tokens : Int
   output_tokens : Int
-}
+} derive(@debug.Debug)
 
 ///|
 /// FinishReason indicates why the model stopped generating.
@@ -114,10 +114,10 @@ pub(all) enum FinishReason {
   ContentFilter
   Error
   Unknown(String)
-}
+} derive(@debug.Debug)
 
 ///|
-pub impl Show for FinishReason with output(self, logger) {
+pub impl Show for FinishReason with fn output(self, logger) {
   match self {
     Stop => logger.write_string("Stop")
     ToolUse => logger.write_string("ToolUse")
@@ -157,7 +157,7 @@ pub(all) enum StreamEvent {
 }
 
 ///|
-pub impl Show for Usage with output(self, logger) {
+pub impl Show for Usage with fn output(self, logger) {
   logger.write_string("Usage(in=")
   logger.write_string(self.input_tokens.to_string())
   logger.write_string(",out=")
@@ -166,7 +166,7 @@ pub impl Show for Usage with output(self, logger) {
 }
 
 ///|
-pub impl Show for StreamEvent with output(self, logger) {
+pub impl Show for StreamEvent with fn output(self, logger) {
   match self {
     TextDelta(s) => {
       logger.write_string("TextDelta(")
@@ -199,9 +199,9 @@ pub impl Show for StreamEvent with output(self, logger) {
     MessageStart => logger.write_string("MessageStart")
     MessageEnd(finish_reason~, usage~) => {
       logger.write_string("MessageEnd(reason=")
-      finish_reason.output(logger)
+      logger.write_string(@debug.to_string(finish_reason))
       logger.write_string(",usage=")
-      usage.output(logger)
+      logger.write_string(@debug.to_string(usage))
       logger.write_string(")")
     }
     Error(s) => {

@@ -248,7 +248,7 @@ pub fn CronService::run_due(self : CronService) -> Int {
 
 ///|
 pub fn CronService::status(self : CronService) -> Map[String, Json] {
-  let out : Map[String, Json] = {}
+  let out : Map[String, Json] = Map([])
   out["enabled"] = true.to_json()
   out["jobs"] = self.jobs.length().to_json()
   out["next_wake_at_ms"] = match self.next_wake_at_ms() {
@@ -327,7 +327,7 @@ fn next_sort_key(next : Int?) -> Int {
 ///|
 fn compute_next_run_cron(expr : String?, now_ms : Int) -> Int? {
   let raw = match expr {
-    Some(e) => e.trim().to_string()
+    Some(e) => e.trim().to_owned()
     None => return None
   }
   if raw == "* * * * *" {

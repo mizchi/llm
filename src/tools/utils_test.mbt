@@ -41,8 +41,8 @@ test "validate_url allows http https only" {
 ///|
 test "json field helpers parse required/optional values" {
   let obj : Json = { "name": "alice".to_json(), "count": (3).to_json() }
-  inspect(required_string(obj, "name"), content="Some(\"alice\")")
-  inspect(optional_string(obj, "name"), content="Some(\"alice\")")
-  inspect(optional_int(obj, "count"), content="Some(3)")
-  inspect(required_string(obj, "missing"), content="None")
+  @debug.debug_inspect(required_string(obj, "name"), content="Some(\"alice\")")
+  @debug.debug_inspect(optional_string(obj, "name"), content="Some(\"alice\")")
+  @debug.debug_inspect(optional_int(obj, "count"), content="Some(3)")
+  @debug.debug_inspect(required_string(obj, "missing"), content="None")
 }

@@ -17,7 +17,7 @@ fn runtime_core_json_get_string(obj : Json, key : String) -> String? {
 ///|
 test "run_runtime_turn stores user/assistant history for user inbound" {
   let sessions = SessionManager::new()
-  let seen_history_len = Ref::new(-1)
+  let seen_history_len = Ref(-1)
   let req = RuntimeTurnRequest::new(
     UserInbound,
     "cli:42",
@@ -42,11 +42,11 @@ test "run_runtime_turn stores user/assistant history for user inbound" {
   let session = sessions.get_or_create("cli:42")
   let hist = session.get_history()
   assert_eq(hist.length(), 2)
-  inspect(
+  @debug.debug_inspect(
     runtime_core_json_get_string(hist[0], "content"),
     content="Some(\"hello\")",
   )
-  inspect(
+  @debug.debug_inspect(
     runtime_core_json_get_string(hist[1], "content"),
     content="Some(\"reply:hello\")",
   )
@@ -76,7 +76,7 @@ test "run_runtime_turn prefixes system sender and drops outbound metadata" {
   assert_eq(result.metadata.length(), 0)
   let session = sessions.get_or_create("telegram:abc")
   let hist = session.get_history()
-  inspect(
+  @debug.debug_inspect(
     runtime_core_json_get_string(hist[0], "content"),
     content="Some(\"[System: subagent] background done\")",
   )

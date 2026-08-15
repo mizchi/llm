@@ -12,7 +12,7 @@ fn chat_test_get_string_field(obj : Json, key : String) -> String {
 
 ///|
 test "run_json_chat_loop returns direct response without tools" {
-  let calls = Ref::new(0)
+  let calls = Ref(0)
   let result = run_json_chat_loop(
     [{ "role": "user".to_json(), "content": "hello".to_json() }],
     [],
@@ -30,8 +30,8 @@ test "run_json_chat_loop returns direct response without tools" {
 
 ///|
 test "run_json_chat_loop executes tool call and appends tool result messages" {
-  let calls = Ref::new(0)
-  let seen_tool_result = Ref::new(false)
+  let calls = Ref(0)
+  let seen_tool_result = Ref(false)
   let result = run_json_chat_loop(
     [{ "role": "user".to_json(), "content": "hi".to_json() }],
     [{ "type": "function".to_json() }],

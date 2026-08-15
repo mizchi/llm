@@ -78,7 +78,7 @@ pub fn parse_claude_code_line(line : String) -> @llm.StreamEvent? {
 }
 
 ///|
-pub impl @llm.Provider for ClaudeCodeProvider with stream(
+pub impl @llm.Provider for ClaudeCodeProvider with fn stream(
   self,
   messages,
   _tools,
@@ -123,6 +123,6 @@ pub impl @llm.Provider for ClaudeCodeProvider with stream(
 }
 
 ///|
-pub impl @llm.Provider for ClaudeCodeProvider with name(_self) -> String {
+pub impl @llm.Provider for ClaudeCodeProvider with fn name(_self) -> String {
   "claude_code"
 }

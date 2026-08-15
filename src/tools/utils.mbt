@@ -63,7 +63,7 @@ pub fn clamp(v : Int, min_v : Int, max_v : Int) -> Int {
 
 ///|
 pub fn normalize_path(path : String) -> String {
-  let mut out = path.trim().to_string().replace_all(old="\\", new="/")
+  let mut out = path.trim().to_owned().replace_all(old="\\", new="/")
   while out.contains("//") {
     out = out.replace_all(old="//", new="/")
   }
@@ -98,7 +98,7 @@ pub fn resolve_path(
 
 ///|
 pub fn guard_command(command : String, restrict_to_workspace : Bool) -> String? {
-  let lower = command.trim().to_string().to_lower()
+  let lower = command.trim().to_owned().to_lower()
   let deny_fragments = [
     "rm -rf", "rm -fr", "del /f", "del /q", "rmdir /s", "format", "mkfs", "diskpart",
     "dd if=", "> /dev/sd", "shutdown", "reboot", "poweroff", ":(){",

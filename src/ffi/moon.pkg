@@ -1,6 +1,12 @@
 import {
   "moonbitlang/core/json",
+  "moonbitlang/async/io",
+  "mizchi/x/http" @x_http,
+  "mizchi/x/process" @x_process,
+  "mizchi/x/sys" @x_sys,
 }
+
+warnings = "-0067"
 
 options(
   "native-stub": [ "native_stub.c" ],

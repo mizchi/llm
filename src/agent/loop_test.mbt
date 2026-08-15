@@ -40,7 +40,7 @@ fn has_tool_result(
 
 ///|
 test "run_agent_loop returns direct response without tools" {
-  let calls = Ref::new(0)
+  let calls = Ref(0)
   let result = run_agent_loop(
     [{ "role": "user".to_json(), "content": "hello".to_json() }],
     [],
@@ -59,8 +59,8 @@ test "run_agent_loop returns direct response without tools" {
 
 ///|
 test "run_agent_loop executes tool call and continues" {
-  let calls = Ref::new(0)
-  let saw_tool_result = Ref::new(false)
+  let calls = Ref(0)
+  let saw_tool_result = Ref(false)
   let result = run_agent_loop(
     [{ "role": "user".to_json(), "content": "echo hi".to_json() }],
     [
@@ -133,7 +133,7 @@ test "run_agent_loop returns fallback when max_iterations exceeded" {
 
 ///|
 test "run_agent_loop_with_provider works with callback provider" {
-  let calls = Ref::new(0)
+  let calls = Ref(0)
   let provider = callback_chat_provider(fn(_messages, _tools, _model) {
     calls.val = calls.val + 1
     LoopResponse::new("from-provider", [], None)

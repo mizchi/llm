@@ -3,6 +3,7 @@ package "mizchi/llm"
 
 import {
   "mizchi/llm/tools",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -90,7 +91,7 @@ pub(all) enum FinishReason {
   ContentFilter
   Error
   Unknown(String)
-}
+} derive(@debug.Debug)
 pub fn FinishReason::from_string(String) -> Self
 pub impl Show for FinishReason
 
@@ -151,7 +152,7 @@ pub(all) enum Role {
   Assistant
   System
   Tool
-} derive(Eq)
+} derive(Eq, @debug.Debug)
 pub fn Role::from_string(String) -> Self
 pub fn Role::to_string(Self) -> String
 pub impl Show for Role
@@ -216,7 +217,7 @@ pub(all) struct ToolCall {
 pub(all) struct Usage {
   input_tokens : Int
   output_tokens : Int
-}
+} derive(@debug.Debug)
 pub impl Show for Usage
 
 // Type aliases
@@ -232,7 +233,6 @@ pub using @tools {type ToolRegistry}
 
 // Traits
 pub(open) trait Provider {
-  stream(Self, Array[Message], Array[@tools.ToolDef], StreamHandler) -> Unit
-  name(Self) -> String
+  fn stream(Self, Array[Message], Array[@tools.ToolDef], StreamHandler) -> Unit
+  fn name(Self) -> String
 }
-

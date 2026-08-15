@@ -30,21 +30,36 @@ test "ToolRegistry - register and execute" {
     "Hello, " + name + "!"
   })
   let defs = registry.get_defs()
-  inspect(defs.length(), content="1")
-  inspect(defs[0].name, content="greet")
+  @debug.debug_inspect(defs.length(), content="1")
+  @debug.debug_inspect(
+    defs[0].name,
+    content=(
+      #|"greet"
+    ),
+  )
   let (result, is_error) = registry.execute("greet", {
     "name": "Alice".to_json(),
   })
-  inspect(result, content="Hello, Alice!")
-  inspect(is_error, content="false")
+  @debug.debug_inspect(
+    result,
+    content=(
+      #|"Hello, Alice!"
+    ),
+  )
+  @debug.debug_inspect(is_error, content="false")
 }
 
 ///|
 test "ToolRegistry - execute unknown tool" {
   let registry = ToolRegistry::new()
   let (result, is_error) = registry.execute("unknown", Json::null())
-  inspect(result, content="Tool not found: unknown")
-  inspect(is_error, content="true")
+  @debug.debug_inspect(
+    result,
+    content=(
+      #|"Tool not found: unknown"
+    ),
+  )
+  @debug.debug_inspect(is_error, content="true")
 }
 
 ///|
@@ -59,13 +74,13 @@ test "ToolDef::to_anthropic_json" {
     input_schema: schema,
   }
   let j = tool.to_anthropic_json()
-  inspect(
+  @debug.debug_inspect(
     json_get_string(j, "name"),
     content=(
       #|Some("read_file")
     ),
   )
-  inspect(
+  @debug.debug_inspect(
     json_get_string(j, "description"),
     content=(
       #|Some("Read a file")
@@ -85,22 +100,32 @@ test "ToolDef::to_openai_json" {
     input_schema: schema,
   }
   let j = tool.to_openai_json()
-  inspect(
+  @debug.debug_inspect(
     json_get_string(j, "type"),
     content=(
       #|Some("function")
     ),
   )
   let has_func = !(json_get_object(j, "function") is None)
-  inspect(has_func, content="true")
+  @debug.debug_inspect(has_func, content="true")
 }
 
 ///|
 test "ToolDef::new constructs definition" {
   let schema : Json = { "type": "object".to_json() }
   let tool = ToolDef::new("echo", "echo text", schema)
-  inspect(tool.name, content="echo")
-  inspect(tool.description, content="echo text")
+  @debug.debug_inspect(
+    tool.name,
+    content=(
+      #|"echo"
+    ),
+  )
+  @debug.debug_inspect(
+    tool.description,
+    content=(
+      #|"echo text"
+    ),
+  )
 }
 
 ///|
@@ -151,5 +176,8 @@ test "ToolRegistry::definitions builds openai function array" {
   )
   let defs = registry.definitions()
   assert_eq(defs.length(), 1)
-  inspect(json_get_string(defs[0], "type"), content="Some(\"function\")")
+  @debug.debug_inspect(
+    json_get_string(defs[0], "type"),
+    content="Some(\"function\")",
+  )
 }

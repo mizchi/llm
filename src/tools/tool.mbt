@@ -33,7 +33,7 @@ pub(all) struct SchemaBuilder {
 
 ///|
 pub fn SchemaBuilder::new() -> SchemaBuilder {
-  { properties: Map::new(), required: [] }
+  { properties: Map([]), required: [] }
 }
 
 ///|
@@ -44,7 +44,7 @@ pub fn SchemaBuilder::string(
   description : String,
   required? : Bool = false,
 ) -> SchemaBuilder {
-  let prop : Map[String, Json] = {}
+  let prop : Map[String, Json] = Map([])
   prop["type"] = "string".to_json()
   prop["description"] = description.to_json()
   self.properties[name] = Json::object(prop)
@@ -62,7 +62,7 @@ pub fn SchemaBuilder::number(
   description : String,
   required? : Bool = false,
 ) -> SchemaBuilder {
-  let prop : Map[String, Json] = {}
+  let prop : Map[String, Json] = Map([])
   prop["type"] = "number".to_json()
   prop["description"] = description.to_json()
   self.properties[name] = Json::object(prop)
@@ -80,7 +80,7 @@ pub fn SchemaBuilder::integer(
   description : String,
   required? : Bool = false,
 ) -> SchemaBuilder {
-  let prop : Map[String, Json] = {}
+  let prop : Map[String, Json] = Map([])
   prop["type"] = "integer".to_json()
   prop["description"] = description.to_json()
   self.properties[name] = Json::object(prop)
@@ -98,7 +98,7 @@ pub fn SchemaBuilder::boolean(
   description : String,
   required? : Bool = false,
 ) -> SchemaBuilder {
-  let prop : Map[String, Json] = {}
+  let prop : Map[String, Json] = Map([])
   prop["type"] = "boolean".to_json()
   prop["description"] = description.to_json()
   self.properties[name] = Json::object(prop)
@@ -117,7 +117,7 @@ pub fn SchemaBuilder::string_enum(
   values : Array[String],
   required? : Bool = false,
 ) -> SchemaBuilder {
-  let prop : Map[String, Json] = {}
+  let prop : Map[String, Json] = Map([])
   prop["type"] = "string".to_json()
   prop["description"] = description.to_json()
   prop["enum"] = Json::array(values.map(fn(v) { v.to_json() }))
@@ -137,9 +137,9 @@ pub fn SchemaBuilder::array(
   item_type : String,
   required? : Bool = false,
 ) -> SchemaBuilder {
-  let items : Map[String, Json] = {}
+  let items : Map[String, Json] = Map([])
   items["type"] = item_type.to_json()
-  let prop : Map[String, Json] = {}
+  let prop : Map[String, Json] = Map([])
   prop["type"] = "array".to_json()
   prop["description"] = description.to_json()
   prop["items"] = Json::object(items)
@@ -153,7 +153,7 @@ pub fn SchemaBuilder::array(
 ///|
 /// Build the JSON Schema object.
 pub fn SchemaBuilder::build(self : SchemaBuilder) -> Json {
-  let schema : Map[String, Json] = {}
+  let schema : Map[String, Json] = Map([])
   schema["type"] = "object".to_json()
   schema["properties"] = Json::object(self.properties)
   if !self.required.is_empty() {
@@ -189,7 +189,7 @@ pub fn ToolExecuteError::to_message(self : ToolExecuteError) -> String {
 
 ///|
 pub fn ToolRegistry::new() -> ToolRegistry {
-  { tools: [], handlers: Map::new() }
+  { tools: [], handlers: Map([]) }
 }
 
 ///|

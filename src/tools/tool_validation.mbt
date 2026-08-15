@@ -194,7 +194,7 @@ fn validate_object_fields(
 ) -> Unit {
   let props = match schema_object_field(schema, "properties") {
     Some(p) => p
-    None => Map::new()
+    None => Map([])
   }
   for entry in map.to_array() {
     let key = entry.0

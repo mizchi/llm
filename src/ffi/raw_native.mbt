@@ -1,17 +1,6 @@
 ///|
-#borrow(key)
-extern "C" fn llm_getenv_ffi(key : Bytes) -> String = "llm_getenv_ffi"
-
-///|
 #borrow(command)
 extern "C" fn llm_popen_ffi(command : Bytes) -> String = "llm_popen_ffi"
-
-///|
-/// Native primitive: get environment variable value.
-fn get_env_raw(name : String) -> String {
-  let key_bytes = mbt_string_to_utf8_bytes(name)
-  llm_getenv_ffi(key_bytes)
-}
 
 ///|
 /// Native primitive: run a command with args (JSON array string), return stdout.

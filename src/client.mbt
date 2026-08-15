@@ -2,9 +2,9 @@
 /// Provider is the core trait for LLM providers.
 pub(open) trait Provider {
   /// Send a streaming request to the LLM.
-  stream(Self, Array[Message], Array[ToolDef], StreamHandler) -> Unit
+  fn stream(Self, Array[Message], Array[ToolDef], StreamHandler) -> Unit
   /// Get the provider name.
-  name(Self) -> String
+  fn name(Self) -> String
 }
 
 ///|

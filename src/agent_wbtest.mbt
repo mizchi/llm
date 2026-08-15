@@ -24,10 +24,15 @@ test "agent - simple text response (no tools)" {
   })
   let expected =
     #|["text:Hello!", "done:no_tool_calls"]
-  inspect(events, content=expected)
+  @debug.debug_inspect(events, content=expected)
   // Messages should include the assistant response
-  inspect(messages.length(), content="2")
-  inspect(messages[1].get_text(), content="Hello!")
+  @debug.debug_inspect(messages.length(), content="2")
+  @debug.debug_inspect(
+    messages[1].get_text(),
+    content=(
+      #|"Hello!"
+    ),
+  )
 }
 
 ///|
@@ -74,9 +79,17 @@ test "agent - tool call loop" {
       _ => ()
     }
   })
-  let expected =
-    #|["exec:greet", "result:greet=Hello, Alice!", "step:0", "done:no_tool_calls"]
-  inspect(events, content=expected)
+  @debug.debug_inspect(
+    events,
+    content=(
+      #|[
+      #|  "exec:greet",
+      #|  "result:greet=Hello, Alice!",
+      #|  "step:0",
+      #|  "done:no_tool_calls",
+      #|]
+    ),
+  )
 }
 
 ///|
@@ -101,7 +114,7 @@ test "agent - max steps" {
   let registry = ToolRegistry::new()
   registry.register("loop_tool", "A tool", Json::null(), fn(_input) { "ok" })
   let messages : Array[Message] = [Message::user("loop")]
-  let done_reason = Ref::new("")
+  let done_reason = Ref("")
   run_agent(BoxedProvider::new(provider), registry, messages, MaxSteps(2), fn(
     e,
   ) {
@@ -110,7 +123,12 @@ test "agent - max steps" {
       _ => ()
     }
   })
-  inspect(done_reason.val, content="max_steps")
+  @debug.debug_inspect(
+    done_reason.val,
+    content=(
+      #|"max_steps"
+    ),
+  )
 }
 
 ///|
@@ -128,7 +146,12 @@ test "collect_text - simple text" {
   }
   let messages : Array[Message] = [Message::user("hi")]
   let text = collect_text(provider, messages)
-  inspect(text, content="Hello, world!")
+  @debug.debug_inspect(
+    text,
+    content=(
+      #|"Hello, world!"
+    ),
+  )
 }
 
 ///|
@@ -150,14 +173,24 @@ test "collect - full response" {
   }
   let messages : Array[Message] = [Message::user("calc")]
   let result = collect(provider, messages)
-  inspect(result.text, content="Result: 42")
-  inspect(result.tool_calls.length(), content="1")
-  inspect(result.tool_calls[0].name, content="calc")
-  inspect(result.finish_reason, content="Stop")
-  inspect(
+  @debug.debug_inspect(
+    result.text,
+    content=(
+      #|"Result: 42"
+    ),
+  )
+  @debug.debug_inspect(result.tool_calls.length(), content="1")
+  @debug.debug_inspect(
+    result.tool_calls[0].name,
+    content=(
+      #|"calc"
+    ),
+  )
+  @debug.debug_inspect(result.finish_reason, content="Stop")
+  @debug.debug_inspect(
     result.usage,
     content=(
-      #|Some(Usage(in=10,out=5))
+      #|Some({ input_tokens: 10, output_tokens: 5 })
     ),
   )
 }
@@ -166,7 +199,7 @@ test "collect - full response" {
 test "truncate_messages - within budget" {
   let msgs : Array[Message] = [Message::user("hi"), Message::assistant("hello")]
   let result = truncate_messages(msgs, 1000)
-  inspect(result.length(), content="2")
+  @debug.debug_inspect(result.length(), content="2")
 }
 
 ///|
@@ -180,7 +213,12 @@ test "truncate_messages - keeps system messages" {
   let result = truncate_messages(msgs, 5)
   // Should keep system + only last messages within budget
   assert_true(result.length() > 0)
-  inspect(result[0].role, content="system")
+  @debug.debug_inspect(
+    result[0].role,
+    content=(
+      #|System
+    ),
+  )
 }
 
 ///|
@@ -192,8 +230,13 @@ test "truncate_messages - drops old messages" {
   ]
   // Budget only fits the last message
   let result = truncate_messages(msgs, 3)
-  inspect(result.length(), content="1")
-  inspect(result[0].get_text(), content="short")
+  @debug.debug_inspect(result.length(), content="1")
+  @debug.debug_inspect(
+    result[0].get_text(),
+    content=(
+      #|"short"
+    ),
+  )
 }
 
 ///|
@@ -206,12 +249,15 @@ test "SchemaBuilder - basic" {
   let s = schema.stringify()
   // Check it's valid JSON with expected structure
   let parsed = @json.parse(s) catch { _ => panic() }
-  inspect(json_get_string(parsed, "type"), content="Some(\"object\")")
+  @debug.debug_inspect(
+    json_get_string(parsed, "type"),
+    content="Some(\"object\")",
+  )
   let props = json_get_object(parsed, "properties")
   assert_true(!(props is None))
   let required = json_get_array(parsed, "required")
   match required {
-    Some(arr) => inspect(arr.length(), content="2")
+    Some(arr) => @debug.debug_inspect(arr.length(), content="2")
     None => panic()
   }
 }
@@ -254,5 +300,5 @@ test "SchemaBuilder - array type" {
 test "estimate_tokens" {
   let msg = Message::user("hello world")
   // "hello world" = 11 chars, (11+3)/4 = 3
-  inspect(msg.estimate_tokens(), content="3")
+  @debug.debug_inspect(msg.estimate_tokens(), content="3")
 }

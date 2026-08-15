@@ -24,7 +24,7 @@ pub fn fetch_sse(
   }
   let lines = split_lines(result)
   for line in lines {
-    let trimmed = line.trim(chars=" \t\r\n").to_string()
+    let trimmed = line.trim(chars=" \t\r\n").to_owned()
     if trimmed.has_prefix("data: ") {
       let data = trimmed.unsafe_substring(start=6, end=trimmed.length())
       if data != "[DONE]" {
@@ -61,7 +61,7 @@ pub fn fetch(
 ///|
 /// Get an environment variable value. Returns empty string if not found.
 pub fn get_env(name : String) -> String {
-  get_env_raw(name)
+  @x_sys.get_env_var(name).unwrap_or("")
 }
 
 ///|

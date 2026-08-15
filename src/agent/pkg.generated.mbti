@@ -235,6 +235,5 @@ pub struct SubagentTask {
 
 // Traits
 pub(open) trait ChatProvider {
-  chat(Self, Array[Json], Array[Json], String) -> LoopResponse
+  fn chat(Self, Array[Json], Array[Json], String) -> LoopResponse
 }
-

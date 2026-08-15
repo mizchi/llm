@@ -43,7 +43,7 @@ fn build_anthropic_body(
   messages : Array[@llm.Message],
   tools : Array[@llm.ToolDef],
 ) -> Json {
-  let body : Map[String, Json] = {}
+  let body : Map[String, Json] = Map([])
   body["model"] = model.to_json()
   body["max_tokens"] = Json::number(max_tokens.to_double())
   body["stream"] = Json::boolean(true)
@@ -152,7 +152,7 @@ pub fn parse_anthropic_event(data : String) -> @llm.StreamEvent? {
 }
 
 ///|
-pub impl @llm.Provider for AnthropicProvider with stream(
+pub impl @llm.Provider for AnthropicProvider with fn stream(
   self,
   messages,
   tools,
@@ -167,7 +167,7 @@ pub impl @llm.Provider for AnthropicProvider with stream(
     messages,
     tools,
   )
-  let active_tools : Map[String, (String, StringBuilder)] = {}
+  let active_tools : Map[String, (String, StringBuilder)] = Map([])
   @ffi.fetch_sse(
     url,
     "POST",
@@ -217,6 +217,6 @@ pub impl @llm.Provider for AnthropicProvider with stream(
 }
 
 ///|
-pub impl @llm.Provider for AnthropicProvider with name(_self) -> String {
+pub impl @llm.Provider for AnthropicProvider with fn name(_self) -> String {
   "anthropic"
 }

@@ -6,7 +6,7 @@ priv struct MockProvider {
 }
 
 ///|
-impl @llm.Provider for MockProvider with stream(
+impl @llm.Provider for MockProvider with fn stream(
   self,
   _messages,
   _tools,
@@ -22,7 +22,7 @@ impl @llm.Provider for MockProvider with stream(
 }
 
 ///|
-impl @llm.Provider for MockProvider with name(_self) -> String {
+impl @llm.Provider for MockProvider with fn name(_self) -> String {
   "mock"
 }
 
@@ -81,7 +81,7 @@ fn test_text_stream() -> Unit raise {
   }
   let messages : Array[@llm.Message] = [@llm.Message::user("hi")]
   let tools : Array[@llm.ToolDef] = []
-  provider.stream(messages, tools, handler)
+  @llm.Provider::stream(provider, messages, tools, handler)
   // Verify events
   for e in events {
     println("  [event] " + e)
@@ -140,7 +140,7 @@ fn test_tool_call_stream() -> Unit raise {
     @llm.Message::user("What's the weather in Tokyo?"),
   ]
   let tools : Array[@llm.ToolDef] = []
-  provider.stream(messages, tools, handler)
+  @llm.Provider::stream(provider, messages, tools, handler)
   assert_eq(tool_calls.length(), 1)
   assert_eq(tool_calls[0].name, "get_weather")
   assert_eq(tool_calls[0].id, "call_1")

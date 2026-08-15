@@ -21,7 +21,7 @@ pub fn exec_stream(
   }
   let lines = split_lines(result)
   for line in lines {
-    if !line.trim(chars=" \t\r\n").to_string().is_empty() {
+    if !line.trim(chars=" \t\r\n").to_owned().is_empty() {
       on_line(line)
     }
   }

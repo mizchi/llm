@@ -23,16 +23,22 @@ fn chat_json_has_field(obj : Json, key : String) -> Bool {
 test "add_tool_result appends tool role payload" {
   let out = add_tool_result([], "id1", "read_file", "ok")
   assert_eq(out.length(), 1)
-  inspect(chat_json_get_string_field(out[0], "role"), content="Some(\"tool\")")
-  inspect(
+  @debug.debug_inspect(
+    chat_json_get_string_field(out[0], "role"),
+    content="Some(\"tool\")",
+  )
+  @debug.debug_inspect(
     chat_json_get_string_field(out[0], "tool_call_id"),
     content="Some(\"id1\")",
   )
-  inspect(
+  @debug.debug_inspect(
     chat_json_get_string_field(out[0], "name"),
     content="Some(\"read_file\")",
   )
-  inspect(chat_json_get_string_field(out[0], "content"), content="Some(\"ok\")")
+  @debug.debug_inspect(
+    chat_json_get_string_field(out[0], "content"),
+    content="Some(\"ok\")",
+  )
 }
 
 ///|
@@ -47,21 +53,24 @@ test "add_assistant_message supports optional tool_calls and reasoning" {
     Some("think"),
   )
   assert_eq(out.length(), 1)
-  inspect(
+  @debug.debug_inspect(
     chat_json_get_string_field(out[0], "role"),
     content="Some(\"assistant\")",
   )
-  inspect(
+  @debug.debug_inspect(
     chat_json_get_string_field(out[0], "content"),
     content="Some(\"hello\")",
   )
   assert_true(chat_json_has_field(out[0], "tool_calls"))
-  inspect(
+  @debug.debug_inspect(
     chat_json_get_string_field(out[0], "reasoning_content"),
     content="Some(\"think\")",
   )
   let out2 = add_assistant_message([], None, None, None)
-  inspect(chat_json_get_string_field(out2[0], "content"), content="Some(\"\")")
+  @debug.debug_inspect(
+    chat_json_get_string_field(out2[0], "content"),
+    content="Some(\"\")",
+  )
   assert_true(!chat_json_has_field(out2[0], "tool_calls"))
   assert_true(!chat_json_has_field(out2[0], "reasoning_content"))
 }

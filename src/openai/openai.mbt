@@ -83,7 +83,7 @@ pub fn OpenAIProvider::new_compat(
 
 ///|
 fn build_openai_headers(api_key : String, endpoint : OpenAIEndpoint) -> Json {
-  let headers : Map[String, Json] = {}
+  let headers : Map[String, Json] = Map([])
   headers["Content-Type"] = "application/json".to_json()
   match endpoint {
     Ollama => ()
@@ -107,11 +107,11 @@ fn build_openai_body(
   messages : Array[@llm.Message],
   tools : Array[@llm.ToolDef],
 ) -> Json {
-  let body : Map[String, Json] = {}
+  let body : Map[String, Json] = Map([])
   body["model"] = model.to_json()
   body["max_tokens"] = Json::number(max_tokens.to_double())
   body["stream"] = Json::boolean(true)
-  let stream_options : Map[String, Json] = {}
+  let stream_options : Map[String, Json] = Map([])
   stream_options["include_usage"] = Json::boolean(true)
   body["stream_options"] = Json::object(stream_options)
   // Build messages array with system prompt
@@ -358,7 +358,7 @@ pub fn parse_openai_event(data : String) -> @llm.StreamEvent? {
 }
 
 ///|
-pub impl @llm.Provider for OpenAIProvider with stream(
+pub impl @llm.Provider for OpenAIProvider with fn stream(
   self,
   messages,
   tools,
@@ -378,7 +378,7 @@ pub impl @llm.Provider for OpenAIProvider with stream(
     tools,
   )
   // Track tool calls for building ToolCallEnd events
-  let active_tools : Map[String, (String, StringBuilder)] = {}
+  let active_tools : Map[String, (String, StringBuilder)] = Map([])
   // Hold pending MessageEnd to merge with a later usage-only chunk
   let pending_end : Ref[@llm.StreamEvent?] = { val: None }
   @ffi.fetch_sse(
@@ -489,7 +489,7 @@ pub impl @llm.Provider for OpenAIProvider with stream(
 }
 
 ///|
-pub impl @llm.Provider for OpenAIProvider with name(self) -> String {
+pub impl @llm.Provider for OpenAIProvider with fn name(self) -> String {
   match self.endpoint {
     OpenAI => "openai"
     OpenRouter => "openrouter"
@@ -510,7 +510,7 @@ pub(all) struct ModelInfo {
 }
 
 ///|
-pub impl Show for ModelInfo with output(self, logger) {
+pub impl Show for ModelInfo with fn output(self, logger) {
   logger.write_string(self.id)
   logger.write_string(" (")
   logger.write_string(self.name)
@@ -523,7 +523,7 @@ pub impl Show for ModelInfo with output(self, logger) {
 /// Fetch model list from OpenRouter API.
 pub fn list_openrouter_models() -> Array[ModelInfo] {
   let models : Array[ModelInfo] = []
-  let headers : Map[String, Json] = {}
+  let headers : Map[String, Json] = Map([])
   headers["Accept"] = "application/json".to_json()
   let headers_json = Json::object(headers).stringify()
   @ffi.fetch(

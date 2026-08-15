@@ -32,7 +32,7 @@ test "tool defs keep expected names and required fields" {
   assert_eq(msg.name, "message")
   assert_eq(spawn.name, "spawn")
   assert_eq(cron.name, "cron")
-  inspect(
+  @debug.debug_inspect(
     tool_actions_test_json_get_string(msg.input_schema, "type"),
     content="Some(\"object\")",
   )
@@ -61,7 +61,7 @@ test "resolve_spawn_tool validates and sets default origin" {
   match resolve_spawn_tool({ "task": "collect logs".to_json() }, ctx) {
     Ok(plan) => {
       assert_eq(plan.task, "collect logs")
-      inspect(plan.label, content="None")
+      @debug.debug_inspect(plan.label, content="None")
       assert_eq(plan.origin_channel, "cli")
       assert_eq(plan.origin_chat_id, "direct")
     }
@@ -90,7 +90,7 @@ test "resolve_cron_tool validates action and parameters" {
       assert_eq(message, "daily reminder")
       assert_eq(channel, "telegram")
       assert_eq(chat_id, "42")
-      inspect(schedule.every_ms, content="Some(60000)")
+      @debug.debug_inspect(schedule.every_ms, content="Some(60000)")
     }
     _ => assert_true(false)
   }

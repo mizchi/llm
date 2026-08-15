@@ -17,7 +17,7 @@ test "cancellable agent stops on cancel" {
   registry.register("loop_tool", "A tool", Json::null(), fn(_input) { "ok" })
   let messages : Array[Message] = [Message::user("loop")]
   let mut step_count = 0
-  let done_reason = Ref::new("")
+  let done_reason = Ref("")
   run_agent_cancellable(
     BoxedProvider::new(provider),
     registry,
@@ -32,7 +32,12 @@ test "cancellable agent stops on cancel" {
       }
     },
   )
-  inspect(done_reason.val, content="cancelled")
+  @debug.debug_inspect(
+    done_reason.val,
+    content=(
+      #|"cancelled"
+    ),
+  )
 }
 
 ///|
@@ -46,7 +51,7 @@ test "cancellable agent runs normally without cancel" {
   ])
   let registry = ToolRegistry::new()
   let messages : Array[Message] = [Message::user("hi")]
-  let done_reason = Ref::new("")
+  let done_reason = Ref("")
   run_agent_cancellable(
     BoxedProvider::new(provider),
     registry,
@@ -60,5 +65,10 @@ test "cancellable agent runs normally without cancel" {
       }
     },
   )
-  inspect(done_reason.val, content="no_tool_calls")
+  @debug.debug_inspect(
+    done_reason.val,
+    content=(
+      #|"no_tool_calls"
+    ),
+  )
 }

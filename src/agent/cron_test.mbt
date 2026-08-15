@@ -3,14 +3,14 @@ test "compute_next_run handles at and every schedules" {
   let at_future = compute_next_run(CronSchedule::at(1200), 1000)
   let at_past = compute_next_run(CronSchedule::at(900), 1000)
   let every = compute_next_run(CronSchedule::every(5000), 1000)
-  inspect(at_future, content="Some(1200)")
-  inspect(at_past, content="None")
-  inspect(every, content="Some(6000)")
+  @debug.debug_inspect(at_future, content="Some(1200)")
+  @debug.debug_inspect(at_past, content="None")
+  @debug.debug_inspect(every, content="Some(6000)")
 }
 
 ///|
 test "cron service runs due every job and updates state" {
-  let now = Ref::new(1000)
+  let now = Ref(1000)
   let executed : Array[String] = []
   let service = CronService::new(
     clock=fn() { now.val },
@@ -20,20 +20,20 @@ test "cron service runs due every job and updates state" {
     }),
   )
   let job = service.add_job("tick", CronSchedule::every(1000), "ping")
-  inspect(job.state.next_run_at_ms, content="Some(2000)")
+  @debug.debug_inspect(job.state.next_run_at_ms, content="Some(2000)")
   now.val = 2500
   let count = service.run_due()
   assert_eq(count, 1)
-  inspect(executed, content="[\"ping\"]")
+  @debug.debug_inspect(executed, content="[\"ping\"]")
   let jobs = service.list_jobs()
   assert_eq(jobs.length(), 1)
-  inspect(jobs[0].state.last_status, content="Some(\"ok\")")
-  inspect(jobs[0].state.last_error, content="None")
+  @debug.debug_inspect(jobs[0].state.last_status, content="Some(\"ok\")")
+  @debug.debug_inspect(jobs[0].state.last_error, content="None")
 }
 
 ///|
 test "cron service removes one-shot job when delete_after_run is true" {
-  let now = Ref::new(1000)
+  let now = Ref(1000)
   let service = CronService::new(clock=fn() { now.val })
   let job = service.add_job(
     "once",
@@ -50,7 +50,7 @@ test "cron service removes one-shot job when delete_after_run is true" {
 
 ///|
 test "cron service enable and remove" {
-  let now = Ref::new(1000)
+  let now = Ref(1000)
   let service = CronService::new(clock=fn() { now.val })
   let job = service.add_job("job", CronSchedule::every(1000), "hi")
   let disabled = service.enable_job(job.id, enabled=false)
